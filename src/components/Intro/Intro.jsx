@@ -35,7 +35,7 @@ function Intro() {
             </li>
             </ul>
           </div>
-        <div className="intro__watch border-btn"><FaPlay/>watch now</div>
+        <a className="intro__watch border-btn"><FaPlay/>watch now</a>
         
       </div>
     </div>
