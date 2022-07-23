@@ -51,7 +51,7 @@ export default function Home() {
   useEffect(() => {
   
     // Update the document title using the browser API
-    console.log(window.ethereum)
+    //console.log(window.ethereum)
   }, []);
 
 

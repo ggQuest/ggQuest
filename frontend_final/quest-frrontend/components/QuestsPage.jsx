@@ -30,6 +30,8 @@ function QuestsPage() {
                                 title={item.title}
                                 reward={item.reward}
                                 gameName={item.game_name}
+                                contractAddress={item.contract_address}
+                                img={item.image}
                             />
                             )
                             
