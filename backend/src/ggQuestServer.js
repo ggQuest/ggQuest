@@ -1,6 +1,8 @@
 const dataProvider = require('./dataProvider.js')
 const express = require('express')
+const cors = require('cors')
 const app = express()
+app.use(cors)
 const port = 8080
 
 app.get('/', (req, res) => {
@@ -22,7 +24,7 @@ app.get('/api/reputation_scores', (req, res) => {
 
 app.get('/api/reputation_scores/:address', (req, res) => {
   const address = parseInt(req.params.address)
-  res.status(200).json(dataProvider.getReputationScores(address));
+  res.status(200).json(dataProvider.getReputationScoresByAddress(address))
 })
 
 

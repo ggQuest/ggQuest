@@ -47,6 +47,9 @@ async function main() {
     await fruitsShooterQuest1.deployed();
     console.log("Fruits Shooter Quest 1 contract deployed to:", fruitsShooterQuest1.address);
 
+    // Add quests to Reputation contracts operators
+    babylonArenaReputationContract.addOperator(babylonArenaQuest1.address);
+    fruitsShooterReputationContract.addOperator(fruitsShooterQuest1.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
