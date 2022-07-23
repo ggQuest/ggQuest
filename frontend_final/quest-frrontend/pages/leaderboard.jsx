@@ -1,5 +1,7 @@
 import React from 'react';
 
+import getPlayers from '../utils/data/getPlayers';
+
 function LeaderBoard() {
   return (
     <>
@@ -15,44 +17,19 @@ function LeaderBoard() {
                 </div>
             </div>
             <div className="row">
-                <div className="name">Player1</div><div className="score">430</div>
+                {
+                    getPlayers.map((player,index) => {
+                        return (
+                            <>
+                                <div className="name" key={index}>Player1</div>
+                                <div className="score">430</div>
+                            </>
+                        )
+                    })
+                }
             </div>
 
-            <div className="row">
-                <div className="name">Player2</div><div className="score">580</div>
-            </div>
-
-            <div className="row">
-                <div className="name">Player3</div><div className="score">310</div>
-            </div>
-
-            <div className="row">
-                <div className="name">Player4</div><div className="score">640</div>
-            </div>
-
-            <div className="row">
-                <div className="name">Player5</div><div className="score">495</div>
-            </div>
-            
-            <div className="row">
-                <div className="name">Player1</div><div className="score">430</div>
-            </div>
-
-            <div className="row">
-                <div className="name">Player2</div><div className="score">580</div>
-            </div>
-
-            <div className="row">
-                <div className="name">Player3</div><div className="score">310</div>
-            </div>
-
-            <div className="row">
-                <div className="name">Player4</div><div className="score">640</div>
-            </div>
-
-            <div className="row">
-                <div className="name">Player5</div><div className="score">495</div>
-            </div>
+           
         </div>
     </section>
         <section className="trending-gamepay-area">
