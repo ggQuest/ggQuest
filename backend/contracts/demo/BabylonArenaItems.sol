@@ -21,6 +21,14 @@ contract BabylonArenaItems is ERC1155 {
         _mint(msg.sender, ElvenShield, 1, "");
     }
 
+    function giveAllItems(address _destination) public {
+        _mint(_destination, ElvenHelmet, 1, "");
+        _mint(_destination, ElvenArmor, 1, "");
+        _mint(_destination, ElvenGauntlets, 1, "");
+        _mint(_destination, ElvenSword, 1, "");
+        _mint(_destination, ElvenShield, 1, "");
+    }
+
     function uri(uint256 _tokenid) override public pure returns (string memory) {
         return string(
             abi.encodePacked(
