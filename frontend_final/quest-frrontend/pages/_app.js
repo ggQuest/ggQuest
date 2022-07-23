@@ -97,7 +97,7 @@ function MyApp({ Component, pageProps }) {
                                             <a href="index-3.html"><img src="./assets/img/logo/h5_logo.png" alt="Logo"/></a>
                                         </div>
                                         <ul className="right">
-                                            <li><Link href="/">My stats</Link></li>
+                                            <li><Link href="/stats">My stats</Link></li>
                                         </ul>
                                     </div>
                                 </nav>
