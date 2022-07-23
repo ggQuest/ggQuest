@@ -1,0 +1,22 @@
+[
+    {
+        "id": 1,
+        "game_name": "Babylon Arena",
+        "title": "Elve Warrior",
+        "description": "Get the full Elve outfit to become a Elve Warrior !",
+        "reputation_reward": 10,
+        "additionnal_rewards": [
+            "1 Elve Warrior NFT"
+        ],
+        "image": "https://images.unsplash.com/photo-1553986782-9f6de60b51b4?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2049&q=80"
+    },
+    {
+        "id": 2,
+        "game_name": "Fruits Shooter",
+        "title": "Fruits Slayer",
+        "description": "Score at least 30 points in one game !",
+        "reputation_reward": 5,
+        "additionnal_rewards": [],
+        "image": "https://image.png"
+    }
+]
