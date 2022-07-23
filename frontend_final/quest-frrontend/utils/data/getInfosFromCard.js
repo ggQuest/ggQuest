@@ -7,7 +7,7 @@ const getInfosForCard =
                 "title": "Elve Warrior",
                 "description": "Get the full Elve outfit to become a Elve Warrior !",
                 "reward": "+10 reputation and 1 Elve Warrior NFT",
-                "image": "https://image.png"
+                "image": "../../public/assets/img/images/Axie.png"
             },
             {
                 "id": 2,
