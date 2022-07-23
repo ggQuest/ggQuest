@@ -1,5 +1,5 @@
 import React from 'react';
-import QuestCardComp from './QuestCardComp';
+import QuestCardComp from '../components/QuestCardComp';
 import getInfosForCard from '../utils/data/getInfosFromCard.js';
 
 function QuestsPage() {
@@ -19,7 +19,6 @@ function QuestsPage() {
             </div>
   
             <div className="row">
-                <div className="col-lg-4 col-md-6">
                     {
                         getInfosForCard.map((item, key) => {
                             return (
@@ -30,12 +29,12 @@ function QuestsPage() {
                                 title={item.title}
                                 reward={item.reward}
                                 gameName={item.game_name}
+                                img={item.image}
                             />
                             )
                             
                         })
                     }
-                </div>
               
             </div>
         </div>
