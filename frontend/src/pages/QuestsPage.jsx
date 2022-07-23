@@ -1,5 +1,6 @@
 import React from 'react';
 import QuestCardComp from '../components/QuestCardComp/QuestCardComp.jsx';
+import getInfosForCard from '../data/getInfosFromCard.js';
 
 function QuestsPage() {
   return (
@@ -19,23 +20,23 @@ function QuestsPage() {
   
             <div className="row">
                 <div className="col-lg-4 col-md-6">
-                    <QuestCardComp filename="Axie.png" title="Axie" reward="Solana" />
+                    {
+                        getInfosForCard.map((item, key) => {
+                            return (
+                            <QuestCardComp 
+                                key={key}
+                                id={item.id} 
+                                description={item.description} 
+                                title={item.title}
+                                reward={item.reward}
+                                gameName={item.game_name}
+                            />
+                            )
+                            
+                        })
+                    }
                 </div>
-                <div className="col-lg-4 col-md-6">
-                    <QuestCardComp filename="BigTime.jpg" title="Illuvium" reward="Ethereum"/>
-                </div>
-                <div className="col-lg-4 col-md-6">
-                    <QuestCardComp filename="EVIO.jpg" title="Ev.io" reward="Matic"/>
-                </div>
-                <div className="col-lg-4 col-md-6">
-                    <QuestCardComp filename="illuvium2.jpg" title="Illuvium" reward="BNB"/>
-                </div>
-                <div className="col-lg-4 col-md-6">
-                    <QuestCardComp filename="staratlas.png" title="Star Atlas" reward="Ethereum"/>
-                </div>
-                <div className="col-lg-4 col-md-6">
-                    <QuestCardComp filename="Sandbox.jpg" title="Sandbox" reward="Solana"/>
-                </div>
+              
             </div>
         </div>
     </section>

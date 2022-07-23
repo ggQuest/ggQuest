@@ -1,13 +1,13 @@
 import React from 'react';
 
 
-function QuestsCardComp() {
+function QuestsCardComp({id, description, gameName, title, reward, img }) {
   return (
     <>
     <div className="trending-gameplay-item mb-50">
         <div className="gameplay-thumb">
             <a href="https://www.youtube.com/watch?v=ssrNcwxALS4" className="popup-video">
-                <img src={require('../../assets/img/images/Axie.png')} alt="" />
+                <img src={img} alt="" />
             </a>
             <div className="treand-gameplay-overlay">
                 <ul>
@@ -17,12 +17,13 @@ function QuestsCardComp() {
         </div>
         <div className="d-block d-sm-flex align-items-start">
             <div className="gameplay-content">
-                <h5 className="title"><a href="#">Bla</a></h5>
+                <h5 className="title"><a href="#"></a></h5>
                 <div className="gameplay-meta">
                     <ul>
-                        <li>Reputation score: 232</li>
-                        <li>Rewards Token : 12</li>
-                        <li>Actual Price of the token : 123 </li>
+                        <li>Title : {title}</li>
+                        <li>Description : {description}</li>
+                        <li>Rewards : {reward}</li>
+                        <li>Game Name : {gameName} </li>
                     </ul>
                 </div>
             </div>
