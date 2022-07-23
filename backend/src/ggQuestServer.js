@@ -2,7 +2,9 @@ const dataProvider = require('./dataProvider.js')
 const express = require('express')
 const cors = require('cors')
 const app = express()
-app.use(cors())
+
+app.use(cors());
+
 const port = 8080
 
 app.get('/', (req, res) => {
@@ -31,4 +33,3 @@ app.get('/api/reputation_scores/:address', (req, res) => {
 app.listen(port, () => {
   console.log(`ggQuest Server now listening on port ${port}`)
 })
-
