@@ -1,0 +1,12 @@
+[
+    {
+        "id": 1,
+        "name": "Babylon Arena",
+        "reputation_contract": "0x98A23c83FD0D5f45CbA733D6e19e25cc20496480"
+    },
+    {
+        "id": 2,
+        "name": "Fruits Shooter",
+        "reputation_contract": "0x5b7D1EfA83c5cfdd3028D0eb555553E87e8cbFed"
+    }
+]
