@@ -8,7 +8,13 @@ const hre = require("hardhat");
 
 const axios = require('axios');
 
-async function getQuests() {
+// Off chain for demo
+function getQuests() {
+    return quests;
+}
+
+// On chain DISABLED FOR DEMO 
+/*async function getQuests() {
 
     var metadata_urls = games.map(async game => {
         for (let i = 0; i < game.quests.length; i++) {
@@ -32,7 +38,7 @@ async function getQuests() {
 
     const quests = await Promise.all(quests_promises)
     return quests
-}
+}*/
 
 async function getQuestContractMetadataURL(address) {
     let quest = await hre.ethers.getContractAt("Quest", address)
@@ -40,11 +46,27 @@ async function getQuestContractMetadataURL(address) {
     return metadataURL
 }
 
+// On chain
+async function getReputationScoresByAddress(address) {
+    const promises = games.map(async game => {
+        let reputationContract = await hre.ethers.getContractAt("ReputationSBT", game.reputation_contract)
+        return {
+            "game_name": game.name,
+            "reputation_score": (await reputationContract.getReputationScore(address)).toNumber(),
+        }
+    })
+
+    const results = await Promise.all(promises)
+    console.log(results)
+    return results;
+}
+
+// Mock-up off chain
 function getQuestsById(id) {
     const quest = quests.find(quests => quests.id === id)
     return(quest)
 }
-
+/*
 function getReputationScoresByAddress(request_address) {
     let scores = []
     reputation.forEach(function(game){
@@ -53,8 +75,9 @@ function getReputationScoresByAddress(request_address) {
         scores.push(scorePerGame)
     })
     return scores
-}
+}*/
  
+// Mock-up off-chain
 function getReputationScores() {
     let scores = []
 

@@ -2,23 +2,83 @@
     {
         "id": 1,
         "game_name": "Babylon Arena",
-        "quest_contract": "0x348001FBcE92AEe471adcAe4F3E75f88f95AE0B2",
+        "quest_contract": "0x2151Cb1329D4652Be41b985Ef94f9d3A389107C6",
         "title": "Elve Warrior",
         "description": "Get the full Elve outfit to become a Elve Warrior !",
         "reputation_reward": 10,
         "additionnal_rewards": [
             "1 Elve Warrior NFT"
         ],
-        "image": "https://images.unsplash.com/photo-1553986782-9f6de60b51b4?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2049&q=80"
+        "image": "https://i.ibb.co/5R2XS3F/BA.png"
     },
     {
         "id": 2,
         "game_name": "Fruits Shooter",
-        "quest_contract": "0x196662A38F7E4E0cba2c1201B5c942756FBBc472",
+        "quest_contract": "0x25C80eC45B40A912eE1c0756b24A1866350259B1",
         "title": "Fruits Slayer",
         "description": "Score at least 30 points in one game !",
         "reputation_reward": 5,
         "additionnal_rewards": [],
-        "image": "https://i.imgur.com/dHoCpkA.png"
+        "image": "https://i.ibb.co/p0P88JK/Fruits-Slayer.jpg"
+    },
+    {
+        "id": 3,
+        "game_name": "Illuvium",
+        "quest_contract": "0x",
+        "title": "Illuvium Quest #1",
+        "description": "Lorem Ipsum Dolor Amet !",
+        "reputation_reward": 12,
+        "additionnal_rewards": [],
+        "image": "https://i.ibb.co/r2S8Lz1/illuvium2-1.jpg"
+    },
+    {
+        "id": 4,
+        "game_name": "Bigtime",
+        "quest_contract": "0x",
+        "title": "Bigtime Quest #1",
+        "description": "Lorem Ipsum Dolor Amet !",
+        "reputation_reward": 5,
+        "additionnal_rewards": [],
+        "image": "https://i.ibb.co/qx4nnFy/BigTime.jpg"
+    },
+    {
+        "id": 5,
+        "game_name": "Sandbox",
+        "quest_contract": "0x",
+        "title": "Sandbox Quest #1",
+        "description": "Lorem Ipsum Dolor Amet !",
+        "reputation_reward": 3,
+        "additionnal_rewards": [],
+        "image": "https://i.ibb.co/D9V2wKt/Sandbox.jpg"
+    },
+    {
+        "id": 6,
+        "game_name": "Evio",
+        "quest_contract": "0x",
+        "title": "Evio Quest #1",
+        "description": "Lorem Ipsum Dolor Amet !",
+        "reputation_reward": 18,
+        "additionnal_rewards": [],
+        "image": "https://i.ibb.co/xhb3cYN/EVIO.jpg"
+    },
+    {
+        "id": 7,
+        "game_name": "Axie",
+        "quest_contract": "0x",
+        "title": "Axie Quest #1",
+        "description": "Lorem Ipsum Dolor Amet !",
+        "reputation_reward": 5,
+        "additionnal_rewards": [],
+        "image": "https://i.ibb.co/JrGmvMc/Axie.png"
+    },
+    {
+        "id": 8,
+        "game_name": "StarAtlas",
+        "quest_contract": "0x",
+        "title": "StarAtlas Quest #1",
+        "description": "Lorem Ipsum Dolor Amet !",
+        "reputation_reward": 10,
+        "additionnal_rewards": [],
+        "image": "https://i.ibb.co/sK3cqbB/staratlas.png"
     }
 ]
