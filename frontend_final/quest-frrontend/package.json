@@ -9,6 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/react": "^11.9.3",
+    "@emotion/styled": "^11.9.3",
+    "@mui/material": "^5.9.1",
     "@rainbow-me/rainbowkit": "^0.4.4",
     "axios": "^0.27.2",
     "cors": "^2.8.5",
@@ -19,7 +22,10 @@
     "wagmi": "^0.5.11"
   },
   "devDependencies": {
+    "autoprefixer": "^10.4.7",
     "eslint": "8.20.0",
-    "eslint-config-next": "12.2.3"
+    "eslint-config-next": "12.2.3",
+    "postcss": "^8.4.14",
+    "tailwindcss": "^3.1.6"
   }
 }

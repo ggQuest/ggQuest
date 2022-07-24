@@ -2,7 +2,7 @@
     {
         "id": 1,
         "game_name": "Babylon Arena",
-        "quest_contract": "0x2151Cb1329D4652Be41b985Ef94f9d3A389107C6",
+        "quest_contract": "0xc2F8170f603DEfB714966354c87761Cb56de92b7",
         "title": "Elve Warrior",
         "description": "Get the full Elve outfit to become a Elve Warrior !",
         "reputation_reward": 10,
@@ -14,7 +14,7 @@
     {
         "id": 2,
         "game_name": "Fruits Shooter",
-        "quest_contract": "0x25C80eC45B40A912eE1c0756b24A1866350259B1",
+        "quest_contract": "0x9c506B60C9d12025318f5b16E2031127E1580Ffc",
         "title": "Fruits Slayer",
         "description": "Score at least 30 points in one game !",
         "reputation_reward": 5,
