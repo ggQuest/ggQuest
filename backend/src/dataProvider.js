@@ -40,11 +40,25 @@ async function getQuestContractMetadataURL(address) {
     return metadataURL
 }
 
+async function getReputationScoresByAddress(address) {
+    const promises = games.map(async game => {
+        let reputationContract = await hre.ethers.getContractAt("ReputationSBT", game.reputation_contract)
+        return {
+            "game_name": game.name,
+            "reputation_score": (await reputationContract.getReputationScore(address)).toNumber(),
+        }
+    })
+
+    const results = await Promise.all(promises)
+    console.log(results)
+    return results;
+}
+
 function getQuestsById(id) {
     const quest = quests.find(quests => quests.id === id)
     return(quest)
 }
-
+/*
 function getReputationScoresByAddress(request_address) {
     let scores = []
     reputation.forEach(function(game){
@@ -53,7 +67,7 @@ function getReputationScoresByAddress(request_address) {
         scores.push(scorePerGame)
     })
     return scores
-}
+}*/
  
 function getReputationScores() {
     let scores = []
