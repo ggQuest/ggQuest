@@ -66,6 +66,7 @@ function StatsPage() {
         </div>
        
     </section>
+    
     </>
   )
 }
