@@ -8,6 +8,7 @@ const hre = require("hardhat");
 
 const axios = require('axios');
 
+// On chain
 async function getQuests() {
 
     var metadata_urls = games.map(async game => {
@@ -40,6 +41,7 @@ async function getQuestContractMetadataURL(address) {
     return metadataURL
 }
 
+// On chain
 async function getReputationScoresByAddress(address) {
     const promises = games.map(async game => {
         let reputationContract = await hre.ethers.getContractAt("ReputationSBT", game.reputation_contract)
@@ -54,6 +56,7 @@ async function getReputationScoresByAddress(address) {
     return results;
 }
 
+// Mock-up off chain
 function getQuestsById(id) {
     const quest = quests.find(quests => quests.id === id)
     return(quest)
@@ -69,6 +72,7 @@ function getReputationScoresByAddress(request_address) {
     return scores
 }*/
  
+// Mock-up off-chain
 function getReputationScores() {
     let scores = []
 
