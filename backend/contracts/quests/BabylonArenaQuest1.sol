@@ -1,23 +1,21 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "../IQuest.sol";
+import "../Quest.sol";
 import "../ReputationSBT.sol";
 
-contract BabylonArenaQuest1 is IQuest {
-
-    mapping(address => bool) public completedBy;
-    ReputationSBT reputationContract;
+contract BabylonArenaQuest1 is Quest {
 
     address public condition1Contract;
-    
-    event Claimed(address caller, bool completed);
 
-    constructor(ReputationSBT _reputationContract, address _condition1Contract) {
-        reputationContract = _reputationContract;
+    constructor(
+        ReputationSBT _reputationContract,
+        string memory _metadataURL,
+        address _condition1Contract
+    ) Quest(_reputationContract, _metadataURL){
         condition1Contract = _condition1Contract;
     }
-
+    
     function _questCompleted() private returns(bool) {
         bool isCompleted = true;
 

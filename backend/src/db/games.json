@@ -2,11 +2,13 @@
     {
         "id": 1,
         "name": "Babylon Arena",
-        "reputation_contract": "0x98A23c83FD0D5f45CbA733D6e19e25cc20496480"
+        "reputation_contract": "0x209fe3061ebc966473b4DFedAAA7B1E77619B1F7",
+        "quests": ["0x348001FBcE92AEe471adcAe4F3E75f88f95AE0B2"]
     },
     {
         "id": 2,
         "name": "Fruits Shooter",
-        "reputation_contract": "0x5b7D1EfA83c5cfdd3028D0eb555553E87e8cbFed"
+        "reputation_contract": "0xf0019E7dFcD70C74D1963bB4cAC7312E3135810A",
+        "quests": ["0x196662A38F7E4E0cba2c1201B5c942756FBBc472"]
     }
 ]

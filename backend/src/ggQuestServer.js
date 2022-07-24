@@ -11,8 +11,8 @@ app.get('/', (req, res) => {
   res.send('Hello World!')
 })
 
-app.get('/api/quests', (req, res) => {
-  res.status(200).json(dataProvider.getQuests());
+app.get('/api/quests', async (req, res) => {
+  res.status(200).json(await dataProvider.getQuests());
 })
 
 app.get('/api/quests/:id', (req,res) => {
@@ -25,7 +25,7 @@ app.get('/api/reputation_scores', (req, res) => {
 })
 
 app.get('/api/reputation_scores/:address', (req, res) => {
-  const address = parseInt(req.params.address)
+  const address = req.params.address
   res.status(200).json(dataProvider.getReputationScoresByAddress(address))
 })
 
