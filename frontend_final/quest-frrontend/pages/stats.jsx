@@ -64,7 +64,7 @@ function StatsPage() {
               
             </div>
         </div>
-        <Footer/>
+       
     </section>
     </>
   )
