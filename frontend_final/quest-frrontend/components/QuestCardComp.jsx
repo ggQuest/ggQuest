@@ -43,18 +43,25 @@ function QuestsCardComp({id, description, gameName, title, reward, img, contract
                 
             <div className="d-block d-sm-flex align-items-start">
                 <div className="gameplay-content">
-                    <h5 className="title"><a href="#"></a></h5>
+                    <h5 className="title"><a href="#">{title}</a></h5>
                     <div className="gameplay-meta">
                         <ul>
-                            <li>Title : {title}</li>
-                            <li>Description : {description}</li>
-                            <li>Rewards : {reward}</li>
-                            <li>Game Name : {gameName} </li>
+                            <div className='row'>
+                                <li>Rewards : {reward}</li>
+                            </div>
+                            <div className='row' styles={{margin: 5}}>
+
+                                <li>Game Name : {gameName} </li>
+                            </div>
+                            <div className='row' styles={{padding: 5}}>
+                                <li>Description : {description}</li>
+                            </div>
                         </ul>
                     </div>
                 </div>
+                
                 <div className="gameplay-status">
-                    <button onClick={claimReward}>
+                    <button className="button" onClick={claimReward}>
                         CLAIM
                     </button>
                 </div>

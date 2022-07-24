@@ -45,22 +45,23 @@ function LeaderBoard() {
                 <div className="col-sm-6 d-none d-sm-block">
                 </div>
             </div>
-            <div className="row">
-                {
-                    dataInfos.map((player,index) => {
-                        return (
-                            <LeaderBoardItem 
-                                key={index} 
-                                address={player.address}
-                                score={player.score}
-                            >
-                            </LeaderBoardItem>
-                        )
-                    })
-                }
-            </div>          
+            {
+                dataInfos.map((player,index) => {
+                    return (
+                        <LeaderBoardItem 
+                            key={index} 
+                            address={player.address}
+                            score={player.score}
+                        >
+                        </LeaderBoardItem>
+                    )
+                })
+            }
         </div>
     </section>
+    <br />
+    <br />
+    <br />
        
     <Footer/>
     </>
