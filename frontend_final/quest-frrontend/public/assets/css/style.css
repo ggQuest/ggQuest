@@ -5146,6 +5146,16 @@ ul.minicart .cart-price .new {
     text-transform: uppercase;
     background: #fa0101;
     border-radius: 4px;
+    padding: 2xdpx 19px;
+    display: inline-block;
+}
+.gameplay-status > button {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    background: #fa0101;
+	color: 'white';
+    border-radius: 4px;
     padding: 2px 19px;
     display: inline-block;
 }
