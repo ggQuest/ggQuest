@@ -7,7 +7,7 @@ import Footer from './../components/Footer';
 
 function LeaderBoard() {
   const [dataInfos, setDataInfos] = useState([]);
-
+  const [count, setCount] = useState(0);
   const url = ' http://13.38.8.173:8080/api/reputation_scores';
 
   var opts = {
@@ -47,11 +47,13 @@ function LeaderBoard() {
             </div>
             {
                 dataInfos.map((player,index) => {
+                    
                     return (
                         <LeaderBoardItem 
                             key={index} 
                             address={player.address}
                             score={player.score}
+                            i={index}
                         >
                         </LeaderBoardItem>
                     )

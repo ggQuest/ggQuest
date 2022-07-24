@@ -5,9 +5,27 @@ import Image from 'next/image';
 const abi = contract_abi.abi;
 const contract2 = "0xDaF8E1B1b202047Abba7390284dc6ed24261f89D";
 
+import Button from '@mui/material/Button';
+import Modal from '@mui/material/Modal';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Box';
 
 
 function QuestsCardComp({id, description, gameName, title, reward, img, contractAddress}) {
+    const style = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 400,
+        bgcolor: '#1e1e2a',
+        border: '2px solid #000',
+        boxShadow: 24,
+        p: 4,
+      };
+    const [open, setOpen] = React.useState(false);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
 
     async function claimReward() {
         if (typeof window.ethereum !== "undefined") {
@@ -31,12 +49,12 @@ function QuestsCardComp({id, description, gameName, title, reward, img, contract
     <div className="col-lg-4 col-md-6">
         <div className="trending-gameplay-item mb-50">
             <div className="gameplay-thumb">
-                <a href="https://www.youtube.com/watch?v=ssrNcwxALS4" className="popup-video">
+                <a className="popup-video">
                     <img src={img} alt="" />
                 </a>
                 <div className="treand-gameplay-overlay">
                     <ul>
-                        <li className="quality">Bla</li>
+                        <li className="quality">{gameName}</li>
                     </ul>
                 </div>
             </div>
@@ -44,24 +62,38 @@ function QuestsCardComp({id, description, gameName, title, reward, img, contract
             <div className="d-block d-sm-flex align-items-start">
                 <div className="gameplay-content">
                     <h5 className="title"><a href="#">{title}</a></h5>
-                    <div className="gameplay-meta">
-                        <ul>
-                            <div className='row'>
-                                <li>Rewards : {reward}</li>
-                            </div>
-                            <div className='row' styles={{margin: 5}}>
 
-                                <li>Game Name : {gameName} </li>
-                            </div>
-                            <div className='row' styles={{padding: 5}}>
-                                <li>Description : {description}</li>
-                            </div>
-                        </ul>
-                    </div>
+
+                    <Button onClick={handleOpen} style={{color: 'white'}}>View Details</Button>
+                    <Modal
+                    open={open}
+                    onClose={handleClose}
+                    aria-labelledby="modal-modal-title"
+                    aria-describedby="modal-modal-description"
+                    >
+                    <Box sx={style}>
+                        <Typography id="modal-modal-title" variant="h6" component="h2" style={{color: "white"}}>
+                            {gameName}
+                        </Typography>
+                        <Typography id="modal-modal-description" sx={{ mt: 2 }} style={{color: "white", 'font-weight': 'bold'}}>
+                        NAME OF THE QUEST : {title}
+                        </Typography>
+                        <Typography id="modal-modal-description" sx={{ mt: 2 }} style={{color: "white"}}>
+                        DESCRIPTION : {description}
+                        </Typography>
+                        
+                        <Typography id="modal-modal-description" sx={{ mt: 2 }} style={{color: "white"}}>
+                        REWARDS : {reward}
+                        </Typography>
+                    </Box>
+                    </Modal>
+
+
+                    
                 </div>
                 
                 <div className="gameplay-status">
-                    <button className="button" onClick={claimReward}>
+                    <button className="btn-claim" onClick={claimReward}>
                         CLAIM
                     </button>
                 </div>
