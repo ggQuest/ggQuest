@@ -9,7 +9,9 @@ import {
   getDefaultWallets,
   RainbowKitProvider,
   ConnectButton,
+  darkTheme
 } from "@rainbow-me/rainbowkit";
+import CustomConnectButton from '../components/CustomConnectButton';
 
 import { chain, configureChains, createClient, WagmiConfig } from "wagmi";
 import { alchemyProvider } from "wagmi/providers/alchemy";
@@ -55,7 +57,7 @@ function MyApp({ Component, pageProps }) {
       </Head>
 
       <WagmiConfig client={wagmiClient}>
-      <RainbowKitProvider chains={chains}>
+      <RainbowKitProvider theme={darkTheme()} chains={chains}>
         <header className="third-header-bg home-five-header">
             <div className="bg"></div>
             <div className="container custom-container">
@@ -66,13 +68,15 @@ function MyApp({ Component, pageProps }) {
                                 <ul>
                                     <li>Follow</li>
                                     <li><a href="https://mobile.twitter.com/gg_quest_gg"><i className="fab fa-twitter"></i></a></li>
+                                    <li><a href="https://mobile.twitter.com/gg_quest_gg"><i className="fab fa-discord"></i></a></li>
+                                    <li><a href="https://mobile.twitter.com/gg_quest_gg"><i className="fab fa-telegram"></i></a></li>
                                 </ul>
                             </div>
                         </div>
                         <div className="col-sm-6">
                             <div className="header-top-login">
                                 <ul>
-                                <ConnectButton />
+                                <CustomConnectButton />
                                 </ul>
                             </div>
                         </div>

@@ -2,6 +2,8 @@ import React from 'react';
 import QuestCardComp from '../components/QuestCardComp';
 import getInfosForCard from '../utils/data/getInfosFromCard.js';
 
+import Footer from './../components/Footer';
+
 function QuestsPage() {
   
 
@@ -42,6 +44,7 @@ function QuestsPage() {
             </div>
         </div>
     </section>
+    <Footer/>
     </>
   )
 }

@@ -14,7 +14,7 @@ function QuestsCardComp({id, description, gameName, title, reward, img, contract
           const provider = new ethers.providers.Web3Provider(window.ethereum);
           console.log({ provider });
           const signer = provider.getSigner();
-          const contract = new ethers.Contract(contract2, abi, signer);
+          const contract = new ethers.Contract(contractAddress, abi, signer);
           try {
             await contract.claimReward();
 

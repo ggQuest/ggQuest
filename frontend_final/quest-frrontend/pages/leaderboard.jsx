@@ -2,6 +2,9 @@ import React from 'react';
 import LeaderBoardItem from '../components/LeaderBoardItem';
 import {useState, useEffect} from 'react';
 
+import Footer from './../components/Footer';
+
+
 function LeaderBoard() {
   const [dataInfos, setDataInfos] = useState([]);
 
@@ -14,11 +17,11 @@ function LeaderBoard() {
   }
 
   async function fetchReput() {
-      let response = await fetch(url,opts);
-      let data = await response.json();
-      console.log(data);
-      console.log(Array.isArray(data));
-      setDataInfos(data);
+    let response = await fetch(url,opts);
+    let data = await response.json();
+    console.log(data);
+    console.log(Array.isArray(data));
+    setDataInfos(data);
   }
   
 
@@ -55,11 +58,11 @@ function LeaderBoard() {
                         )
                     })
                 }
-            </div>
-
-           
+            </div>          
         </div>
     </section>
+       
+    <Footer/>
     </>
   )
 }

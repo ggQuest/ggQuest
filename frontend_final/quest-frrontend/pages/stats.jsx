@@ -3,6 +3,7 @@ import StatItem from '../components/StatItem';
 import { ethers } from 'ethers';
 import { useAccount, useBalance } from 'wagmi';
 import {useState, useEffect} from 'react';
+import Footer from '../components/Footer';
 
 function StatsPage() {
 
@@ -63,6 +64,7 @@ function StatsPage() {
               
             </div>
         </div>
+        <Footer/>
     </section>
     </>
   )
