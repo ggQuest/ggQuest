@@ -48,7 +48,6 @@ function StatsPage() {
                 </div>
             </div>
   
-            <div className="row">
                     {
                         dataInfos.map((item, key) => {
                             return (
@@ -63,7 +62,6 @@ function StatsPage() {
                     }
               
             </div>
-        </div>
        
     </section>
     
