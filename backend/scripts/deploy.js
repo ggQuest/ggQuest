@@ -37,13 +37,15 @@ async function main() {
 
     // Babylon Arena
     const BabylonArenaQuest1 = await hre.ethers.getContractFactory("BabylonArenaQuest1");
-    const babylonArenaQuest1 = await BabylonArenaQuest1.deploy(babylonArenaReputationContract.address, babylonArenaItems.address);
+    const babylonArenaQuest1 = await BabylonArenaQuest1.deploy(
+      babylonArenaReputationContract.address, "http://13.38.8.173:8080/api/quests/1", babylonArenaItems.address);
     await babylonArenaQuest1.deployed();
     console.log("Babylon Arena Quest 1 contract deployed to:", babylonArenaQuest1.address);
 
     // Fruits Shooter
     const FruitsShooterQuest1 = await hre.ethers.getContractFactory("FruitsShooterQuest1");
-    const fruitsShooterQuest1 = await FruitsShooterQuest1.deploy(fruitsShooterReputationContract.address, fruitsShooterScores.address);
+    const fruitsShooterQuest1 = await FruitsShooterQuest1.deploy(
+      fruitsShooterReputationContract.address, "http://13.38.8.173:8080/api/quests/2", fruitsShooterScores.address);
     await fruitsShooterQuest1.deployed();
     console.log("Fruits Shooter Quest 1 contract deployed to:", fruitsShooterQuest1.address);
 

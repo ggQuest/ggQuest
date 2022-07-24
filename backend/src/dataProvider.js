@@ -3,8 +3,41 @@ const quests = require('./db/quests.json')
 const reputation = require('./db/reputation.json')
 const games = require('./db/games.json')
 
-function getQuests() {
-    return quests;
+// Onchain data
+const hre = require("hardhat");
+
+const axios = require('axios');
+
+async function getQuests() {
+
+    var metadata_urls = games.map(async game => {
+        for (let i = 0; i < game.quests.length; i++) {
+            const metadata_url= await getQuestContractMetadataURL(game.quests[i])
+            return metadata_url
+        }  
+    })
+
+    const urls = await Promise.all(metadata_urls)
+
+    var quests_promises = urls.map(url => {
+        return axios
+        .get(url)
+        .then(res => {
+            return res.data;
+        })
+        .catch(error => {
+            console.error(error);
+        });
+    })
+
+    const quests = await Promise.all(quests_promises)
+    return quests
+}
+
+async function getQuestContractMetadataURL(address) {
+    let quest = await hre.ethers.getContractAt("Quest", address)
+    let metadataURL = await quest.getMetadata()
+    return metadataURL
 }
 
 function getQuestsById(id) {
@@ -17,7 +50,6 @@ function getReputationScoresByAddress(request_address) {
     reputation.forEach(function(game){
         scorePerGame = game.reputation_scores.find(score => score.address == request_address)
         scorePerGame.game_name = game.name
-        delete scorePerGame.address
         scores.push(scorePerGame)
     })
     return scores
