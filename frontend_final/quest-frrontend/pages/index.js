@@ -60,6 +60,7 @@ export default function Home() {
                                 title={item.title}
                                 reward={item.reputation_reward}
                                 gameName={item.game_name}
+                                contractAddress={item.quest_contract}
                                 img={item.image}
                             />
                             )

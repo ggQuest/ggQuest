@@ -11,6 +11,7 @@ function QuestsCardComp({id, description, gameName, title, reward, img, contract
 
     async function claimReward() {
         if (typeof window.ethereum !== "undefined") {
+            console.log(contractAddress);
           const provider = new ethers.providers.Web3Provider(window.ethereum);
           console.log({ provider });
           const signer = provider.getSigner();
@@ -31,7 +32,7 @@ function QuestsCardComp({id, description, gameName, title, reward, img, contract
         <div className="trending-gameplay-item mb-50">
             <div className="gameplay-thumb">
                 <a href="https://www.youtube.com/watch?v=ssrNcwxALS4" className="popup-video">
-                    <img src="/assets/img/images/Axie.png" alt="" />
+                    <img src={img} alt="" />
                 </a>
                 <div className="treand-gameplay-overlay">
                     <ul>
