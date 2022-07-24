@@ -8,8 +8,13 @@ const hre = require("hardhat");
 
 const axios = require('axios');
 
-// On chain
-async function getQuests() {
+// Off chain for demo
+function getQuests() {
+    return quests;
+}
+
+// On chain DISABLED FOR DEMO 
+/*async function getQuests() {
 
     var metadata_urls = games.map(async game => {
         for (let i = 0; i < game.quests.length; i++) {
@@ -33,7 +38,7 @@ async function getQuests() {
 
     const quests = await Promise.all(quests_promises)
     return quests
-}
+}*/
 
 async function getQuestContractMetadataURL(address) {
     let quest = await hre.ethers.getContractAt("Quest", address)

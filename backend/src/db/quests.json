@@ -20,5 +20,65 @@
         "reputation_reward": 5,
         "additionnal_rewards": [],
         "image": "https://i.imgur.com/dHoCpkA.png"
+    },
+    {
+        "id": 3,
+        "game_name": "Illuvium",
+        "quest_contract": "0x",
+        "title": "Illuvium Quest #1",
+        "description": "Lorem Ipsum Dolor Amet !",
+        "reputation_reward": 12,
+        "additionnal_rewards": [],
+        "image": "https://i.ibb.co/r2S8Lz1/illuvium2-1.jpg"
+    },
+    {
+        "id": 4,
+        "game_name": "Bigtime",
+        "quest_contract": "0x",
+        "title": "Bigtime Quest #1",
+        "description": "Lorem Ipsum Dolor Amet !",
+        "reputation_reward": 5,
+        "additionnal_rewards": [],
+        "image": "https://i.ibb.co/qx4nnFy/BigTime.jpg"
+    },
+    {
+        "id": 5,
+        "game_name": "Sandbox",
+        "quest_contract": "0x",
+        "title": "Sandbox Quest #1",
+        "description": "Lorem Ipsum Dolor Amet !",
+        "reputation_reward": 3,
+        "additionnal_rewards": [],
+        "image": "https://i.ibb.co/D9V2wKt/Sandbox.jpg"
+    },
+    {
+        "id": 6,
+        "game_name": "Evio",
+        "quest_contract": "0x",
+        "title": "Evio Quest #1",
+        "description": "Lorem Ipsum Dolor Amet !",
+        "reputation_reward": 18,
+        "additionnal_rewards": [],
+        "image": "https://i.ibb.co/xhb3cYN/EVIO.jpg"
+    },
+    {
+        "id": 7,
+        "game_name": "Axie",
+        "quest_contract": "0x",
+        "title": "Axie Quest #1",
+        "description": "Lorem Ipsum Dolor Amet !",
+        "reputation_reward": 5,
+        "additionnal_rewards": [],
+        "image": "https://i.ibb.co/JrGmvMc/Axie.png"
+    },
+    {
+        "id": 8,
+        "game_name": "StarAtlas",
+        "quest_contract": "0x",
+        "title": "StarAtlas Quest #1",
+        "description": "Lorem Ipsum Dolor Amet !",
+        "reputation_reward": 10,
+        "additionnal_rewards": [],
+        "image": "https://i.ibb.co/sK3cqbB/staratlas.png"
     }
 ]

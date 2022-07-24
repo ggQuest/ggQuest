@@ -26,7 +26,7 @@ app.get('/api/reputation_scores', (req, res) => {
 
 app.get('/api/reputation_scores/:address', async (req, res) => {
   const address = req.params.address
-  res.status(200).json(await dataProvider.getReputationScoresByAddress(address))
+  res.status(200).json(dataProvider.getReputationScoresByAddress(address))
 })
 
 
