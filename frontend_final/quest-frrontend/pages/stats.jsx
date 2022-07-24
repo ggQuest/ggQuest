@@ -1,19 +1,18 @@
-/*
-import contract from "./contracts/NumberBox.json";
-
-const contractAddress = "0xFDA9C8A3d94A9786d9639Dca33b92604802ba6e0";
-const abi = contract.abi;*/
 import React from 'react';
-import QuestCardComp from '../components/QuestCardComp';
-import getInfosForCard from '../utils/data/getInfosFromCard.js';
-import { useState, useEffect } from 'react';
-import Footer from './../components/Footer';
+import StatItem from '../components/StatItem';
+import { ethers } from 'ethers';
+import { useAccount, useBalance } from 'wagmi';
+import {useState, useEffect} from 'react';
+import Footer from '../components/Footer';
 
+function StatsPage() {
 
-export default function Home() {
+    const { address, isConnecting, isDisconnected } = useAccount();
+    console.log(address);
+  
   const [dataInfos, setDataInfos] = useState([]);
 
-  const url = 'http://13.38.8.173:8080/api/quests';
+  const url = ' http://13.38.8.173:8080/api/reputation_scores/'+ address;
 
   var opts = {
       headers: {
@@ -21,7 +20,7 @@ export default function Home() {
       }
   }
 
-  async function fetchText() {
+  async function fetchOwnUser() {
       let response = await fetch(url,opts);
       let data = await response.json();
       console.log(data);
@@ -31,17 +30,17 @@ export default function Home() {
   
 
   useEffect(() => {
-    fetchText();
+    fetchOwnUser();
   },[]);
-  return (
 
+  return (
     <>
     <section className="trending-gamepay-area">
         <div className="container">
             <div className="row align-items-center mb-30">
                 <div className="col-sm-6">
                     <div className="hf-section-title">
-                        <h4 className="title">Trending quests</h4>
+                        <h4 className="title">My Stats</h4>
                     </div>
                 </div>
                 <div className="col-sm-6 d-none d-sm-block">
@@ -51,16 +50,12 @@ export default function Home() {
   
             <div className="row">
                     {
-                          dataInfos.map((item, key) => {
+                        dataInfos.map((item, key) => {
                             return (
-                            <QuestCardComp 
+                            <StatItem 
                                 key={key}
-                                id={item.id} 
-                                description={item.description} 
-                                title={item.title}
-                                reward={item.reputation_reward}
+                                reputation={item.reputation_score} 
                                 gameName={item.game_name}
-                                img={item.image}
                             />
                             )
                             
@@ -69,9 +64,10 @@ export default function Home() {
               
             </div>
         </div>
+       
     </section>
-    <Footer />
-
-    </>  
+    </>
   )
 }
+
+export default StatsPage

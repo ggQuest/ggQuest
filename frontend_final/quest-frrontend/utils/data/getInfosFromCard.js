@@ -8,31 +8,11 @@ var opts = {
 
 async function fetchText() {
     let response = await fetch(url,opts);
-    let data = await response.text();
+    let data = await response.json();
     console.log(data);
+    console.log(Array.isArray(data));
 }
 
-fetchText();
-
-const getInfosForCard =
-        [
-            {
-                "id": 1,
-                "game_name": "Babylon Arena",
-                "title": "Elve Warrior",
-                "description": "Get the full Elve outfit to become a Elve Warrior !",
-                "reward": "+10 reputation and 1 Elve Warrior NFT",
-                "image": "../../public/assets/img/images/Axie.png"
-            },
-            {
-                "id": 2,
-                "game_name": "Fruits Shooter",
-                "title": "Fruit Slayer",
-                "description": "Score at least 30 points in one game !",
-                "reward": "+5 reputation",
-                "image": "https://image.png"
-            }
-        ]
-;
+const getInfosForCard = fetchText();
 
 export default getInfosForCard;

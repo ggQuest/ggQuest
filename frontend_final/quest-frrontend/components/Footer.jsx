@@ -32,7 +32,7 @@ function Footer() {
                         <div className="col-xl-3 col-lg-4 col-md-6">
                             <div className="footer-widget mb-50">
                                 <div className="footer-logo mb-35">
-                                    <a href="index.html"><img src={require('../public/assets/img/logo/w_h5_logo.png')} alt="" /></a>
+                                    <a href="index.html"><img src='/assets/img/logo/w_h5_logo.png' alt="" /></a>
                                 </div>
                                 <div className="footer-text">
                                     <p>Gemas marketplace the relase etras thats sheets continig passag.</p>
@@ -107,8 +107,8 @@ function Footer() {
                         </div>
                     </div>
                 </div>
-                <div className="footer-fire"><img src={require('../public/assets/img/images/footer_fire.png')} alt="" /></div>
-                <div className="footer-fire footer-fire-right"><img src={require('../public/assets/img/images/footer_fire.png')} alt="" /></div>
+                <div className="footer-fire"><img src='/assets/img/images/footer_fire.png' alt="" /></div>
+                <div className="footer-fire footer-fire-right"><img src='/assets/img/images/footer_fire.png' alt="" /></div>
             </div>
             <div className="copyright-wrap s-copyright-wrap">
                 <div className="container">
@@ -120,7 +120,7 @@ function Footer() {
                         </div>
                         <div className="col-lg-6 col-md-6 d-none d-md-block">
                             <div className="payment-method-img text-right">
-                                <img  src={require('../public/assets/img/images/card_img.png')} alt="../assets/img" />
+                                <img  src='/assets/img/images/card_img.png' alt="../assets/img" />
                             </div>
                         </div>
                     </div>
