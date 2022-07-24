@@ -35,6 +35,7 @@ function StatsPage() {
 
   return (
     <>
+   
     <section className="trending-gamepay-area">
         <div className="container">
             <div className="row align-items-center mb-30">
@@ -64,7 +65,7 @@ function StatsPage() {
             </div>
        
     </section>
-    
+    <Footer></Footer>
     </>
   )
 }

@@ -58,11 +58,7 @@ function LeaderBoard() {
                 })
             }
         </div>
-    </section>
-    <br />
-    <br />
-    <br />
-       
+    </section> 
     <Footer/>
     </>
   )
