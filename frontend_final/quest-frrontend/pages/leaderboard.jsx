@@ -2,6 +2,9 @@ import React from 'react';
 
 import getPlayers from '../utils/data/getPlayers';
 
+import Footer from './../components/Footer';
+
+
 function LeaderBoard() {
   return (
     <>
@@ -27,9 +30,7 @@ function LeaderBoard() {
                         )
                     })
                 }
-            </div>
-
-           
+            </div>          
         </div>
     </section>
         <section className="trending-gamepay-area">
@@ -43,11 +44,14 @@ function LeaderBoard() {
                 <div className="col-sm-6 d-none d-sm-block">
                 </div>
             </div>
-            <div className="row">
-                <div className="name">Player1</div><div className="score">430</div>
+            <div className="row" style={{background: '#0e0f15', padding: 15, margin: 5}}>
+                <div style={{paddingRight: 10}}>Player1</div>
+                <div style={{background: 'red', width: 4}}></div>
+
+                <div style={{paddingLeft: 10}} className="score">430</div>
             </div>
 
-            <div className="row">
+            <div className="row" style={{background: '#0e0f15', padding: 15, margin: 5}}>
                 <div className="name">Player2</div><div className="score">580</div>
             </div>
 
@@ -84,6 +88,7 @@ function LeaderBoard() {
             </div>
         </div>
     </section>
+    <Footer/>
     </>
   )
 }
