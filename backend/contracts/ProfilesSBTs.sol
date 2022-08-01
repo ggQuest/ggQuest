@@ -19,7 +19,6 @@ contract ProfilesSBTs {
         string pseudo;
         string profilePictureURL;
         string coverPictureURL;
-        bool isVerified;
         bool isRegistered;
 
         // Reputation
@@ -146,7 +145,7 @@ contract ProfilesSBTs {
     **/
     function increaseReputation(address _userAddress, uint _amount) external {
         require(operators[msg.sender], "Only operators can manage reputation");
-        require(profiles[msg.sender].isRegistered, "Profile not registered");
+        require(profiles[_userAddress].isRegistered, "Profile not registered");
 
         profiles[_userAddress].gainedReputation = profiles[_userAddress].gainedReputation.add(_amount);
 
@@ -160,9 +159,9 @@ contract ProfilesSBTs {
     **/
     function decreaseReputation(address _userAddress, uint _amount) external {
         require(operators[msg.sender], "Only operators can manage reputation");
-        require(profiles[msg.sender].isRegistered, "Profile not registered");
+        require(profiles[_userAddress].isRegistered, "Profile not registered");
 
-        profiles[_userAddress].gainedReputation = profiles[_userAddress].lostReputation.add(_amount);
+        profiles[_userAddress].lostReputation = profiles[_userAddress].lostReputation.add(_amount);
 
         emit DecreaseReputation(_userAddress, _amount);
     }
@@ -193,7 +192,7 @@ contract ProfilesSBTs {
     * @return true if the address is available
     **/
     function isAvailable(string memory _pseudo) external view returns (bool) {
-        return takenPseudonymes[_pseudo];
+        return !takenPseudonymes[_pseudo];
     }
 
     /** 
@@ -235,7 +234,7 @@ contract ProfilesSBTs {
         require(bytes(thirdParties[_thirdPartyId]).length != 0, "No third party found with this ID");
 
         for(uint i = 0; i < profiles[_profileAddress].linkedThirdParties.length; i++) {
-            require(profiles[_profileAddress].linkedThirdParties[i].thirdPartyId != _thirdPartyUserID, "This profile is already linked to this third party");
+            require(profiles[_profileAddress].linkedThirdParties[i].thirdPartyId != _thirdPartyId, "This profile is already linked to this third party");
         }
 
         ThirdParty memory newThirdPartyLink;
@@ -248,18 +247,30 @@ contract ProfilesSBTs {
     }
 
     /** 
-    * @notice Unink a third party account from a profile
+    * @notice Unlink a third party account from a profile
     * @param _profileAddress address of the profile
     * @param _thirdPartyId id of the supported third party (index of the third party in thirdParties)
     **/
-    function unLinkThirdPartyToProfile(address _profileAddress, uint _thirdPartyId) external {
+    function unlinkThirdPartyFromProfile(address _profileAddress, uint _thirdPartyId) external {
         require(operators[msg.sender], "Only operators can unlink third parties to profiles");
         require(bytes(thirdParties[_thirdPartyId]).length != 0, "No third party found with this ID");
 
+        bool removed = false;
+        uint removedIndex;
         for(uint i = 0; i < profiles[_profileAddress].linkedThirdParties.length; i++) {
             if(profiles[_profileAddress].linkedThirdParties[i].thirdPartyId == _thirdPartyId) {
                 delete profiles[_profileAddress].linkedThirdParties[i];
+                removed = true;
+                removedIndex = i;
             }
+        }
+
+        if(removed) {
+            // Remove gap from array by putting last item to removed index
+            profiles[_profileAddress].linkedThirdParties[removedIndex]
+                = profiles[_profileAddress].linkedThirdParties[profiles[_profileAddress].linkedThirdParties.length-1];
+
+            profiles[_profileAddress].linkedThirdParties.pop();
         }
 
         emit UnlinkThirdPartyToProfile(_profileAddress, _thirdPartyId);
