@@ -24,7 +24,6 @@ module.exports = {
   paths: {
     artifacts: './src/artifacts'
   },
-  defaultNetwork: "mumbai",
   networks: {
     mumbai: {
       url: `https://polygon-mumbai.infura.io/v3/${process.env.INFURA_PROJECT_ID}`,

@@ -9,7 +9,7 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
  * @notice Non-transferable token (aka Soulbound token) containing informations about ggQuest gaming profile of an address
  * @dev As SBT doesn't have any standard yet, this code may change in the future when it will be available
  **/
-contract ProfilesSBT {
+contract ProfilesSBTs {
 
     using SafeMath for uint;
 
@@ -46,7 +46,7 @@ contract ProfilesSBT {
     mapping(address => ProfileData) private profiles;
     // Pseudonymes to avoid two players to have the same one
     mapping(string => bool) private takenPseudonymes;
-    address[] registeredAddresses;
+    address[] public registeredAddresses;
 
     // Supported thirdParties (Twitch, Discord, Steam...)
     string[] thirdParties;
@@ -58,10 +58,13 @@ contract ProfilesSBT {
     event Mint(address _userAddress, string _pseudo);
     event Burn(address _userAddress);
     event Update(address _userAddress, string _pseudo);
+
     event IncreaseReputation(address _userAddress, uint _amount);
     event DecreaseReputation(address _userAddress, uint _amount);
+
     event AddOperator(address _operator);
     event RemoveOperator(address _operator);
+
     event AddSupportedThirdParty(string _name);
     event LinkThirdPartyToProfile(address _userAddress, uint _thirdPartyId, uint _thirdPartyUserId);
     event UnlinkThirdPartyToProfile(address _userAddress, uint _thirdPartyId);
@@ -76,7 +79,7 @@ contract ProfilesSBT {
     * @notice Add operator
     * @param _operator address of the new operator
     **/
-    function addOperator(address _operator) public {
+    function addOperator(address _operator) external {
         require(operators[msg.sender], "Only operators can manage operators");
         operators[_operator] = true;
         emit AddOperator(_operator);
@@ -86,10 +89,19 @@ contract ProfilesSBT {
     * @notice Remove operator
     * @param _operator address of the operator to remove
     **/
-    function removeOperator(address _operator) public {
+    function removeOperator(address _operator) external {
         require(operators[msg.sender], "Only operators can manage operators");
         delete operators[_operator];
         emit RemoveOperator(_operator);
+    }
+
+    /**
+    * @notice Checks if the address is an operator
+    * @param _operator address to challenge
+    * @return true if the address is operator
+    **/
+    function isOperator(address _operator) external view returns(bool) {
+        return operators[_operator];
     }
 
     /**
@@ -266,7 +278,7 @@ contract ProfilesSBT {
             !takenPseudonymes[newPseudo] // pseudo not taken
             || (takenPseudonymes[newPseudo] && keccak256(bytes(newPseudo)) == keccak256(bytes(currentPseudo))), // or taken but belonging to the sender and not changing
             "Pseudonyme is not available");
-        require(bytes(_userData.pseudo).length != 0, "Pseudonyme cannot be empty");
+        require(bytes(_userData.pseudo).length != 0, "Pseudo cannot be empty");
 
         // Mark the pseudo as taken if modified
         if(keccak256(bytes(newPseudo)) != keccak256(bytes(currentPseudo))) {
