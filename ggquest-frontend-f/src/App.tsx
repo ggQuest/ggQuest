@@ -18,10 +18,12 @@ import {
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
 
+import * as dotenv from "dotenv";
+dotenv.config({ path: __dirname+'/.env' });
 
 function App() {
 
-  const ALCHEMY_ID = "OhWoMqluANt9vyw0XOJNogavKkeNDmby";
+  const ALCHEMY_ID = process.env.ALCHEMY_ID;
   const {chains, provider} = configureChains(
     [chain.mainnet, chain.polygon,chain.optimism, chain.arbitrum],
     [alchemyProvider({ apiKey: ALCHEMY_ID }),
