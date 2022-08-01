@@ -21,7 +21,7 @@ import { publicProvider } from 'wagmi/providers/public';
 
 function App() {
 
-  const ALCHEMY_ID = "OhWoMqluANt9vyw0XOJNogavKkeNDmby";
+  const ALCHEMY_ID = process.env.ALCHEMY_ID;
   const {chains, provider} = configureChains(
     [chain.mainnet, chain.polygon,chain.optimism, chain.arbitrum],
     [alchemyProvider({ apiKey: ALCHEMY_ID }),
