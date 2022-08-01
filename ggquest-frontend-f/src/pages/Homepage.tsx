@@ -13,6 +13,7 @@ import StarAtlasCharac from "./../assets/images/starAtlasCharac.png";
 
 import quests from "./../utils/data/getQuests";
 import { useEffect, useState } from "react";
+import { Footer } from "../components/Footer";
 
 const QuestTitle = styled.div`
 display: none;
@@ -79,6 +80,8 @@ const Homepage = () => {
             })
           }
         </ContainerQuest>
+        <Footer/>
+
         </>
   )
 }

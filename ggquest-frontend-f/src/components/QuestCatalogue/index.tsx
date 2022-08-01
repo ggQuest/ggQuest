@@ -19,11 +19,10 @@ const CardContainer = styled.div`
   box-shadow: 0 0 12px 1px rgba(15, 15, 15, 0.12);
   position: relative;
   padding: 20px solid;
-  border: 1px solid hsl(196, 100%, 50%);
+  border: 1px solid ;
   border-image-slice: 1;
   display:flex;
   margin:30px;
-  
 `;
 
 const CardWrapper = styled.div`

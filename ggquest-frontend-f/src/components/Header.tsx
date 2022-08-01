@@ -11,7 +11,7 @@ import { Title } from "./common";
 
 
 
-const HeaderContainer = styled.div`
+export const HeaderContainer = styled.div`
 height: ${theme.header.height}px;
 position: sticky;
 top: 0;
@@ -33,13 +33,16 @@ z-index: 10;
   background: rgba(255, 255, 255, 0.01);
 }
 `;
+interface HACProps {
+  isFooter?: boolean;
+}
 
-const HeaderAbsoluteContainer = styled.div`
+export const HeaderAbsoluteContainer = styled.div<HACProps>`
   display: flex;
   height: 100%;
   width: 100%;
   position:absolute;
-  top:30px;
+  top: ${props=>props.isFooter ? "0px" : "30px"};
   justify-content: center;
 
   @media (max-width: ${sizes.xl}px) {
@@ -47,7 +50,7 @@ const HeaderAbsoluteContainer = styled.div`
   }
 `;
 
-const LinksContainer = styled.div`
+export const LinksContainer = styled.div`
   display: flex;
 `;
 
@@ -60,7 +63,7 @@ const LogoContainer = styled.div`
     padding-left: 0;
   }
 `;
-const NavItem = styled.div.attrs({
+export const NavItem = styled.div.attrs({
     className: "d-flex align-items-center justify-content-center",
 })`
     padding: 0px 16px;
@@ -76,7 +79,7 @@ const NavItem = styled.div.attrs({
     }
 `;
 
-const ConnectItem = styled(Title)`
+export const ConnectItem = styled(Title)`
     padding: 0px 16px;
     height: 100%;
     opacity: 1;
@@ -93,7 +96,7 @@ const ConnectItem = styled(Title)`
     }
 `;
 
-const NavLinkText = styled(Title)`
+export const NavLinkText = styled(Title)`
   letter-spacing: 1.5px;
   font-size: 14px;
   line-height: 20px;
@@ -105,19 +108,24 @@ const NavLinkText = styled(Title)`
   }
 `;
 
-const renderLinkItem = (
+export const renderLinkItem = (
     title: string,
     to: string,
-    isSelected: boolean = true,
+    isFooter: boolean = false,
     primary: boolean = true,
     external: boolean = false
   ) => {
     return (
    
           <NavItem>
-            <Link className="lien" to={`${to}`}>
-              <NavLinkText>{title}</NavLinkText>
-            </Link>
+            {!isFooter ? 
+              <Link className="lien" to={`${to}`}>
+                <NavLinkText>{title}</NavLinkText>
+              </Link> : 
+              <a href={to} className="lien">
+                <NavLinkText>{title}</NavLinkText>
+              </a>
+            }
           </NavItem>
     
     );

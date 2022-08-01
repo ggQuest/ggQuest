@@ -44,7 +44,7 @@ const InfoContainer = styled.div<InfoCProps>`
     props.variant === "Axie Infinity" ? "linear-gradient(90deg, rgba(216,188,197,1) 0%, rgba(174,215,238,1) 50%, rgba(148,233,183,1) 100%)" : 
     props.variant === "Illuvium" ? "linear-gradient(90deg, rgba(231,201,116,1) 2%, rgba(63,94,251,1) 100%, rgba(250,0,0,1) 100%)" : 
     props.variant === "Evio" ? "linear-gradient(90deg, rgba(216,188,197,1) 0%, rgba(159,74,226,1) 0%, rgba(14,26,198,1) 100%, rgba(148,233,183,1) 100%)" : 
-    props.variant === "Bigtime" ? "linear-gradient(90deg, rgba(216,188,197,1) 0%, rgba(191,226,74,1) 0%, rgba(254,138,55,1) 100%)" : 
+    props.variant === "Bigtime" ? "linear-gradient(90deg, rgba(216,188,197,1) 0%, rgba(191,226,74,1) 0%, rgba(254,138,55,1) 100%);" : 
     props.variant === "StarAtlas" ? "linear-gradient(90deg, rgba(216,188,197,1) 0%, rgba(99,226,74,1) 0%, rgba(224,167,227,1) 91%);" : 
 
     "#fc0a54" 

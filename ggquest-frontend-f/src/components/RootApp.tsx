@@ -5,6 +5,7 @@ import LeaderboardPage from "../pages/LeaderboardPage";
 import Homepage from "../pages/Homepage";
 import Header from "./Header";
 import { BackgroundContainer, BackgroundText } from "./QuestCatalogue";
+import { Footer } from "./Footer";
 
 const Root = styled.div`
     background-color: black;
