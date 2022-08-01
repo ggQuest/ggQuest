@@ -2,14 +2,15 @@ import React, { useState } from 'react';
 
 import styled, { keyframes } from 'styled-components';
 
-import { BuyProduct } from "./claimQuest";
-import { Overview } from "./overviewQuest";
+import { ClaimQuest } from "./claimQuest";
+import { OverviewQuest } from "./overviewQuest";
 import AxiePig2 from "./../../assets/images/axiePig2.png";
 
 import { CardContext } from "./context";
 import { motion } from "framer-motion";
 import colors from '../../lib/colors';
 import { Title } from '../common';
+import { QuestInfo } from '../../pages/Homepage';
 
 
 const CardContainer = styled.div`
@@ -43,9 +44,13 @@ const rotateInDown =  keyframes`
 	20%, 40%, 60%, 80% {transform: translateX(10px);}
 }
 `
-const AxieMoving = styled(motion.div)`
+interface AMProps {
+  isSmall?: boolean;
+}
+//TODO ; charac from staratlas
+const AxieMoving = styled(motion.div)<AMProps>`
   position: absolute;
-  width: auto;
+  width: ${props=> props.isSmall ? "130px" : "auto"};
   height: 23em;
   top: 3em;
   right: 0em;
@@ -91,6 +96,7 @@ type QCProps = {
   srcGame?:string;
   srcToken?:string;
   questItem?: any;
+  questInfos: QuestInfo;
 }
 
 const QuestCatalogue = (props : QCProps) => {
@@ -110,13 +116,14 @@ const QuestCatalogue = (props : QCProps) => {
                 initial={{ opacity: 0 }}
                 animate={animate}
                 transition={{ type: "tween", duration: 1 }}
+                isSmall={props.game === "StarAtlas" ? true : false}
                 >
-                    <img src={props.srcGame} />
+                    <img src={props.srcGame} /> 
                 </AxieMoving>
                 
                 <CardWrapper>
-                    <Overview title={props.game} />
-                    <BuyProduct srcToken={props.srcToken} title={props.game}/>
+                    <OverviewQuest title={props.game} />
+                    <ClaimQuest srcToken={props.srcToken} title={props.game} questInfos={props.questInfos}/>
                 </CardWrapper>
                
             </CardContainer>

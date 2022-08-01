@@ -6,7 +6,7 @@ var opts = {
     }
 }
 
-export default async function fetchText(): Promise<object> {
+export default async function fetchText(): Promise<object[]> {
     let response = await fetch(url,opts);
     return await response.json();
     //console.log(data);

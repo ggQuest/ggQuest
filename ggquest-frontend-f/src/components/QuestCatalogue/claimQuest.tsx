@@ -105,8 +105,10 @@ const ClaimText = styled.span<CTProps>`
   padding-left:20px;
 `;
 
-export function BuyProduct(props : any) {
+export function ClaimQuest(props : any) {
   const { active, setActive } = useContext(CardContext);
+
+  const infos = props.questInfos;
 
   const switchToOverview = () => {
     setActive("overview");
@@ -121,7 +123,7 @@ export function BuyProduct(props : any) {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       console.log({ provider });
       const signer = provider.getSigner();
-      const contract = new ethers.Contract(contractAddress, abi, signer);
+      const contract = new ethers.Contract(infos.contract_address, abi, signer);
       try {
         await contract.claimReward();
 
@@ -130,8 +132,7 @@ export function BuyProduct(props : any) {
       }
     }
   }
-  //todo : props.contractAddress
-
+  
   return (
     <BuyProductContainer animate={animate} transition={transition}>
       <ButtonContainer onClick={switchToOverview} close variant={props.title}>
@@ -145,7 +146,7 @@ export function BuyProduct(props : any) {
         </ButtonContainer>
         <br></br>
         <ButtonContainer variant={props.title}>
-          <ClaimText white variant={props.title}>Elve Warrior</ClaimText>
+          <ClaimText white variant={props.title}> {infos.title} </ClaimText>
         </ButtonContainer>
         <br></br>
 
@@ -154,7 +155,7 @@ export function BuyProduct(props : any) {
         </ButtonContainer> 
         <br></br>
         <ButtonContainer long variant={props.title}>
-          <ClaimText white variant={props.title}>Get the full Elve outfit to become a Elve Warrior ! </ClaimText>
+          <ClaimText white variant={props.title}> {infos.description} </ClaimText>
         </ButtonContainer>
         <br></br>
         <ButtonContainer variant={props.title}>
@@ -162,7 +163,7 @@ export function BuyProduct(props : any) {
         </ButtonContainer>  
         <br/> 
         <ButtonContainer variant={props.title}>
-          <ClaimText white variant={props.title}>10</ClaimText>
+          <ClaimText white variant={props.title}> {infos.reputation_reward} </ClaimText>
         </ButtonContainer>
       </TitleText>
       

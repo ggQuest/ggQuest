@@ -7,6 +7,9 @@ import SandBackgroundImg from "./../../assets/images/sand4.png";
 import EvioBackgroundImg from "./../../assets/images/evio.png";
 import IlluBackgroundImg from "./../../assets/images/illuHome.png";
 
+import BigTimeBackgroundImg from "./../../assets/images/bigtimeHome.jpeg";
+import StarAtlasBackgroundImg from "./../../assets/images/starAtlasHome.jpeg";
+
 import { Button, TitleText, transition } from "./common";
 import { CardContext } from "./context";
 import colors from "../../lib/colors";
@@ -22,7 +25,14 @@ const OverviewContainer = styled(motion.div)<OCProps>`
   display: flex;
   flex-direction: column-reverse;
   align-items: center;
-  background: url(${props => props.game === "Axie" ? AxieBackgroundImg : props.game === "Sandbox" ? SandBackgroundImg :  props.game === "Evio" ? EvioBackgroundImg : IlluBackgroundImg}) center;
+  background: url(${props => 
+    props.game === "Axie" ? AxieBackgroundImg : 
+    props.game === "Sandbox" ? SandBackgroundImg :  
+    props.game === "Evio" ? EvioBackgroundImg :
+    props.game === "Bigtime" ? BigTimeBackgroundImg :  
+    props.game === "StarAtlas" ? StarAtlasBackgroundImg :  
+    IlluBackgroundImg}
+  ) center;
   background-size: cover;
   background-position: -85px 0px;
   
@@ -37,7 +47,7 @@ const TitleContainer = styled.div`
   margin-bottom: 1.8em;
 `;
 
-export function Overview(props : any) {
+export function OverviewQuest(props : any) {
   const { active, setActive } = useContext(CardContext);
 
   const switchToBuy = () => {
