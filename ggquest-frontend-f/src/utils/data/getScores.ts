@@ -7,17 +7,7 @@ var opts = {
     }
 }
 
-async function fetchScores() {
+export default async function fetchScores(): Promise<object[]> {
     let response = await fetch(url,opts);
-    let data = await response.text();
-    console.log(data);
-    //return data;
+    return await response.json();
 }
-
-const getScores =[
-    {
-        "name":  "genru"
-    }
-] 
-
-export default getScores;

@@ -47,7 +47,6 @@ const rotateInDown =  keyframes`
 interface AMProps {
   isSmall?: boolean;
 }
-//TODO ; charac from staratlas
 const AxieMoving = styled(motion.div)<AMProps>`
   position: absolute;
   width: ${props=> props.isSmall ? "130px" : "auto"};

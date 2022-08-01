@@ -18,9 +18,11 @@ export const Button = styled.button<ButtonProps>`
   background-color: ${props=> 
     props.overview ? "black" : 
     props.variant === "Sandbox" ? "#fc0a54" :
-    props.variant === "Axie" ? "rgba(29,216,231,1)" : 
+    props.variant === "Axie Infinity" ? "rgba(29,216,231,1)" : 
     props.variant === "Illuvium" ? "rgba(232,168,29,1)" : 
     props.variant === "Evio" ? "black" : 
+    props.variant === "Bigtime" ? "#aa6b3f" : 
+    props.variant === "StarAtlas" ? "black" : 
     "#fc0a54"
   };
   background-color: linear-gradient(

@@ -62,7 +62,7 @@ const Homepage = () => {
                 }
                 const srcGame = 
                     item.game_name === "Illuvium" ? IlluCharac : 
-                    item.game_name === "Axie" ? AxiePig2 : 
+                    item.game_name === "Axie Infinity" ? AxiePig2 : 
                     item.game_name === "Sandbox" ? SandboxCharac : 
                     item.game_name === "Evio" ? EvioCharac : 
                     item.game_name === "Bigtime" ? BigTimeCharac : 
@@ -78,12 +78,6 @@ const Homepage = () => {
 
             })
           }
-          {/*
-            <QuestCatalogue game="Axie" srcGame={AxiePig2} srcToken={AxieToken}  />
-            <QuestCatalogue game="Sandbox" srcGame={SandboxCharac} srcToken={SandToken}/>
-            <QuestCatalogue game="Evio" srcGame={EvioCharac} srcToken={AxieToken}/>
-            <QuestCatalogue game="Illuvium" srcGame={IlluCharac} srcToken={AxieToken}/>
-          */}
         </ContainerQuest>
         </>
   )

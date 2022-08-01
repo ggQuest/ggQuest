@@ -41,9 +41,12 @@ const InfoContainer = styled.div<InfoCProps>`
   justify-content: space-around;
   background: ${props=> 
     props.variant === "Sandbox" ? "linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab)" :
-    props.variant === "Axie" ? "linear-gradient(90deg, rgba(216,188,197,1) 0%, rgba(174,215,238,1) 50%, rgba(148,233,183,1) 100%)" : 
+    props.variant === "Axie Infinity" ? "linear-gradient(90deg, rgba(216,188,197,1) 0%, rgba(174,215,238,1) 50%, rgba(148,233,183,1) 100%)" : 
     props.variant === "Illuvium" ? "linear-gradient(90deg, rgba(231,201,116,1) 2%, rgba(63,94,251,1) 100%, rgba(250,0,0,1) 100%)" : 
     props.variant === "Evio" ? "linear-gradient(90deg, rgba(216,188,197,1) 0%, rgba(159,74,226,1) 0%, rgba(14,26,198,1) 100%, rgba(148,233,183,1) 100%)" : 
+    props.variant === "Bigtime" ? "linear-gradient(90deg, rgba(216,188,197,1) 0%, rgba(191,226,74,1) 0%, rgba(254,138,55,1) 100%)" : 
+    props.variant === "StarAtlas" ? "linear-gradient(90deg, rgba(216,188,197,1) 0%, rgba(99,226,74,1) 0%, rgba(224,167,227,1) 91%);" : 
+
     "#fc0a54" 
   };
   animation: ${gradient} 10s ease infinite;
@@ -76,9 +79,11 @@ export const ButtonContainer = styled.div<BCProps>`
   align-items: center;
   background: ${props => 
     props.variant === "Sandbox" ? "rgba(252, 10, 84, 0.12)" :
-    props.variant === "Axie" ? "rgba(140,218,233,0.20774247198879547)" : 
+    props.variant === "Axie Infinity" ? "rgba(140,218,233,0.20774247198879547)" : 
     props.variant === "Illuvium" ? "rgba(232,168,29,0.1951374299719888)" : 
-    props.variant === "Evio" ? "rgba(154, 10, 84, 0.12)" : 
+    props.variant === "Evio" ? "rgba(154, 10, 84, 0.12)" :
+    props.variant === "StarAtlas" ? " rgba(130,216,112,0.1)" :
+    props.variant === "Bigtime" ? "rgba(255,171,49,0.1)" :
     "rgba(100, 10, 74, 0.12)"
   };
   border-radius: ${props => props.long ? "10px" : "48px"};
@@ -95,9 +100,11 @@ const ClaimText = styled.span<CTProps>`
   color: ${props => 
     props.white ? "white" : 
     props.variant === "Sandbox" ? "#fc0a54" :
-    props.variant === "Axie" ? "rgba(29,216,231,1)" : 
+    props.variant === "Axie Infinity" ? "rgba(29,216,231,1)" : 
     props.variant === "Illuvium" ? "rgba(232,168,29,1)" : 
-    props.variant === "Evio" ? "rgba(249,23,46,1)" : 
+    props.variant === "Evio" ? "rgba(249,23,46,1)" :
+    props.variant === "StarAtlas" ? "rgba(88,255,53,1)" :
+    props.variant === "Bigtime" ? "rgba(255,171,49,1)" : 
     "rgba(100, 10, 74, 0.12)"
   };
   

@@ -6,15 +6,7 @@ var opts = {
     }
 }
 
-async function fetchStats() {
+export default async function fetchStats():Promise<object[]> {
     let response = await fetch(url,opts);
-    let data = await response.text();
-    console.log(data);
+    return await response.json();
 }
-
-//fetchStats();
-
-const getStats = {
-
-}
-export default getStats;

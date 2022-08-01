@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import styled from "styled-components";
 import { motion } from "framer-motion";
 
-import AxieBackgroundImg from "./../../assets/images/axie2.png";
+import AxieBackgroundImg from "./../../assets/images/axieP.png";
 import SandBackgroundImg from "./../../assets/images/sand4.png";
 import EvioBackgroundImg from "./../../assets/images/evio.png";
 import IlluBackgroundImg from "./../../assets/images/illuHome.png";
@@ -26,7 +26,7 @@ const OverviewContainer = styled(motion.div)<OCProps>`
   flex-direction: column-reverse;
   align-items: center;
   background: url(${props => 
-    props.game === "Axie" ? AxieBackgroundImg : 
+    props.game === "Axie Infinity" ? AxieBackgroundImg : 
     props.game === "Sandbox" ? SandBackgroundImg :  
     props.game === "Evio" ? EvioBackgroundImg :
     props.game === "Bigtime" ? BigTimeBackgroundImg :  

@@ -34,7 +34,7 @@ export const Container = styled(Title)<ContainerProps>`
 
 const Table = ({data} : any) => {
     const titles = {
-        player :  "",
+        address :  "",
         score : ""
     }
     const keys = Object.keys(titles);
@@ -50,8 +50,7 @@ const Table = ({data} : any) => {
                     {["#", ...keys].map((item, index) => (
                         
                             <STH key={index}>{item}</STH>
-                        
-                        
+                    
                     ))}
                 </STHeadTR>
             </STHead>
@@ -70,9 +69,7 @@ const Table = ({data} : any) => {
             
         </STable>
         </Container>
-        <BackgroundContainer>
-            <BackgroundText>GG QUEST</BackgroundText>
-        </BackgroundContainer>
+        
         </>
     );
 };
