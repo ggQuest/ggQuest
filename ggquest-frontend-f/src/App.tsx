@@ -18,8 +18,6 @@ import {
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
 
-import * as dotenv from "dotenv";
-dotenv.config({ path: __dirname+'/.env' });
 
 function App() {
 
