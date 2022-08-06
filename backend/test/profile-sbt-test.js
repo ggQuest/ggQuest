@@ -1,11 +1,11 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
-describe("ProfileSBTs", function () {
+describe("ggProfiles", function () {
   
     before(async function() {
         [deployer,account1,account2, account3,trashAccount] = await ethers.getSigners();
-        const ProfilesSBTs = await hre.ethers.getContractFactory("ProfilesSBTs");
+        const ProfilesSBTs = await hre.ethers.getContractFactory("ggProfiles");
         this.profilesSBTs = await ProfilesSBTs.deploy("ggProfiles", "GGP");
         await this.profilesSBTs.deployed();
     });

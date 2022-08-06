@@ -2,47 +2,20 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "./ggStructs.sol";
 
 /**
- * @title ProfileSBT
+ * @title ggProfiles
  * @author h0tmilk
  * @notice Non-transferable token (aka Soulbound token) containing informations about ggQuest gaming profile of an address
  * @dev As SBT doesn't have any standard yet, this code may change in the future when it will be available
  **/
-contract ProfilesSBTs {
+contract ggProfiles {
 
     using SafeMath for uint;
 
-
-    struct ProfileData {
-        // Data of the user
-        string pseudo;
-        string profilePictureURL;
-        string coverPictureURL;
-        bool isRegistered;
-
-        // Reputation
-        uint gainedReputation;
-        uint lostReputation;
-
-        // Associated hird parties (discord, twitch...)
-        ThirdParty[] linkedThirdParties;
-    }
-
-    struct UpdatableByUserData {
-        // Struct to facilitate ProfileData modifications by users
-        string pseudo;
-        string profilePictureURL;
-        string coverPictureURL;
-    }
-
-    struct ThirdParty {
-        uint thirdPartyId;
-        uint userID;
-    }
-
     // Associate an address with profile data
-    mapping(address => ProfileData) private profiles;
+    mapping(address => ggStructs.ProfileData) private profiles;
     // Pseudonymes to avoid two players to have the same one
     mapping(string => bool) private takenPseudonymes;
     address[] public registeredAddresses;
@@ -107,7 +80,7 @@ contract ProfilesSBTs {
     * @notice Registers a new gaming profile
     * @param _userData data of the new profile
     **/
-    function mint(UpdatableByUserData memory _userData) external {
+    function mint(ggStructs.UpdatableByUserData memory _userData) external {
         require(!profiles[msg.sender].isRegistered, "Profile already registered");
         _setUserData(msg.sender, _userData);
         profiles[msg.sender].isRegistered = true;
@@ -132,7 +105,7 @@ contract ProfilesSBTs {
     * @notice Update sender's profile data
     * @param _userData updatable data to be affected to the sender
     **/
-    function update(UpdatableByUserData memory _userData) external {
+    function update(ggStructs.UpdatableByUserData memory _userData) external {
         require(profiles[msg.sender].isRegistered, "Profile not registered, please mint first");
         _setUserData(msg.sender, _userData);
         emit Update(msg.sender, _userData.pseudo);
@@ -200,7 +173,7 @@ contract ProfilesSBTs {
     * @param _userAddress address of the user
     * @return profile data associated with the given user address
     **/
-    function getProfileData(address _userAddress) external view returns (ProfileData memory) {
+    function getProfileData(address _userAddress) external view returns (ggStructs.ProfileData memory) {
         return profiles[_userAddress];
     }
 
@@ -237,7 +210,7 @@ contract ProfilesSBTs {
             require(profiles[_profileAddress].linkedThirdParties[i].thirdPartyId != _thirdPartyId, "This profile is already linked to this third party");
         }
 
-        ThirdParty memory newThirdPartyLink;
+        ggStructs.ThirdParty memory newThirdPartyLink;
         newThirdPartyLink.thirdPartyId = _thirdPartyId;
         newThirdPartyLink.userID = _thirdPartyUserID;
 
@@ -281,7 +254,7 @@ contract ProfilesSBTs {
     * @param _user address of the user profile
     * @param _userData data to update
     **/
-    function _setUserData(address _user, UpdatableByUserData memory _userData) private {
+    function _setUserData(address _user, ggStructs.UpdatableByUserData memory _userData) private {
         string memory currentPseudo = profiles[_user].pseudo;
         string memory newPseudo = _userData.pseudo;
 
