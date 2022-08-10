@@ -1,4 +1,4 @@
-const url = 'http://13.38.8.173:8080/api/quests'
+const url = 'https://gg.quest/api/quests'
 
 var opts = {
     headers: {
