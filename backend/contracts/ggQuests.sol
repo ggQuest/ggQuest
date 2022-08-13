@@ -2,28 +2,43 @@
 pragma solidity ^0.8.0;
 
 import "./ggProfiles.sol";
-import "./ggStructs.sol";
+import "./ggQuest.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 
 /**
- * @title ggQUests
+ * @title ggQuests
  * @author h0tmilk
  * @notice ggQuests are challenges for players. They are linked to web3 games and allow to 
  * win rewards and increase ggProfile reputation
  */
 contract ggQuests {
 
+    using SafeMath for uint;
+
     mapping(address => bool) public operators;
 
     // Players' profiles
     ggProfiles private profiles;
-    ggStructs.Game[] private games;
-    ggStructs.GameStudio[] private gameStudios;
-    ggStructs.Quest[] private quests;
-    mapping(address => uint[]) private completedQuests; // profile => list of questIDs
-    mapping(uint => mapping(address => bool)) private questsCompletedBy; // questID => address => bool completed
 
-    constructor(ggProfiles _ggProfiles) {
+    ggQuest[] private quests;
+    string public questsMetadataBaseURI;
+    mapping(uint => uint) private completedQuests; // questID => anumber of profiles who completed the quest
+    mapping(address => uint[]) private completedQuestsByProfile; // profile => list of questIDs
+
+    string[] public games; // array of game name
+    string public gamesMetadataBaseURI; // Base URI to get game metadata
+
+    mapping(uint => uint[]) public gameIdToQuestIds;
+    mapping(uint => uint) public questIdToGameId;
+
+    constructor(ggProfiles _ggProfiles, string memory _questsMetadataBaseURI, string memory _gamesMetadataBaseURI) {
         profiles = _ggProfiles;
+        gamesMetadataBaseURI = _gamesMetadataBaseURI;
+        questsMetadataBaseURI = _questsMetadataBaseURI;
         operators[msg.sender] = true;
     }
 
@@ -36,8 +51,7 @@ contract ggQuests {
     * @notice Add operator
     * @param _operator address of the new operator
     **/
-    function addOperator(address _operator) external {
-        require(operators[msg.sender], "Only operators can manage operators");
+    function addOperator(address _operator) external onlyOperator {
         operators[_operator] = true;
         emit AddOperator(_operator);
     }
@@ -46,75 +60,75 @@ contract ggQuests {
     * @notice Remove operator
     * @param _operator address of the operator to remove
     **/
-    function removeOperator(address _operator) external {
-        require(operators[msg.sender], "Only operators can manage operators");
+    function removeOperator(address _operator) external onlyOperator{
         delete operators[_operator];
         emit RemoveOperator(_operator);
     }
 
     // Quests ----------------------------------------------
+
     event CreateQuest(uint questID, string gameName);
-    event UpdateQuest(uint questID, string gameName);
-    event ActivateQuest(uint questID, string gameName);
-    event DeactivateQuest(uint questID, string gameName);
 
     /**
     * @notice Create a quests
-    * @param _quest quest data
+    * @param _reputationReward reputation reward of the quest
+    * @param _gameId game of the quest
     * @return generated questID
     **/
-    function createQuest(ggStructs.UpdatableQuestFields memory _quest) external returns (uint) {
-        require(games[_quest.gameID].exists, "No game is linked to this gameID");
-        ggStructs.Quest memory newQuest;
-        newQuest.gameID = _quest.gameID;
-        newQuest.metadataURL = _quest.metadataURL;
-        newQuest.reputationReward = _quest.reputationReward;
-        newQuest.exists = true;
-
+    function createQuest(uint _reputationReward, uint _gameId) external onlyOperator returns (uint) {
+        uint questId = quests.length;
+        ggQuest newQuest = new ggQuest(string(abi.encodePacked(questsMetadataBaseURI, Strings.toString(questId))), _reputationReward);
         quests.push(newQuest);
-        emit CreateQuest(quests.length, games[_quest.gameID].gameName);
-        return quests.length;
+
+        questIdToGameId[questId] = _gameId;
+        gameIdToQuestIds[_gameId].push(questId);
+
+        emit CreateQuest(questId, games[_gameId]);
+
+        return questId;
     }
 
-    /**
-    * @notice Update a quests
-    * @param _questID quest index
-    * @param _quest quest data
-    **/
-    function updateQuest(uint _questID, ggStructs.UpdatableQuestFields memory _quest) external {
-        require(games[_quest.gameID].exists, "No game is linked to this gameID");
-        require(quests[_questID].exists, "Quest doesn't exist");
-        quests[_questID].gameID = _quest.gameID;
-        quests[_questID].metadataURL = _quest.metadataURL;
-        quests[_questID].reputationReward = _quest.reputationReward;
-
-        emit UpdateQuest(_questID, games[_quest.gameID].gameName);
+    function getQuestURI(uint _questId) external view returns (string memory) {
+        require(quests.length > _questId, "QuestID does not exist");
+        return ggQuest(quests[_questId]).getQuestURI();
     }
 
-    /**
-    * @notice Activate a quest
-    * @param _questID quest index
-    **/
-    function activateQuest(uint _questID) external {
-        require(quests[_questID].exists, "Quest doesn't exist");
-        quests[_questID].isActive = true;
-        emit ActivateQuest(_questID, games[quests[_questID].gameID].gameName);
+    function getQuests() external view returns (ggQuest[] memory) {
+        return quests;
     }
 
-    /**
-    * @notice Deactivate a quest
-    * @param _questID quest index
-    **/
-    function deactivateQuest(uint _questID) external {
-        require(quests[_questID].exists, "Quest doesn't exist");
-        emit DeactivateQuest(_questID, games[quests[_questID].gameID].gameName);
+    function addQuestOperator(uint _questId, address _operator) external onlyOperator {
+        require(quests.length > _questId, "QuestID does not exist");
+        ggQuest(quests[_questId]).addOperator(_operator);
     }
 
-    // Rewards ---------------------------------------------
-    event AddReward(address caller, bool completed);
-    event RemoveReward(address caller, bool completed);
-    event ClaimReward(address caller, bool completed);
+    function removeQuestOperator(uint _questId, address _operator) external onlyOperator {
+        require(quests.length > _questId, "QuestID does not exist");
+        ggQuest(quests[_questId]).removeOperator(_operator);
+    }
+
     // Games & Game studios --------------------------------
-    event AddGameStudio(address _operator);
-    event AddGame(address _operator);
+
+    event AddGame(string gameName, uint gameId);
+
+    function addGame(string memory _gameName) external onlyOperator returns (uint) {
+        games.push(_gameName);
+        emit AddGame(_gameName, games.length-1);
+        return games.length-1;
+    }
+
+    function getUrlMetadata(uint _gameId) external view returns (string memory){
+        require(games.length > _gameId, "GameId does not exist");
+        return string(abi.encodePacked(gamesMetadataBaseURI, Strings.toString(_gameId)));
+    }
+
+    function getGames() external view returns (string[] memory) {
+        return games;
+    }
+
+    modifier onlyOperator() {
+        require(operators[msg.sender], "Only operators can call this function");
+        _;
+    }
+    
 }
