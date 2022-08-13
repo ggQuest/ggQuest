@@ -77,11 +77,13 @@ contract ggQuests {
     **/
     function createQuest(uint _reputationReward, uint _gameId) external onlyOperator returns (uint) {
         uint questId = quests.length;
-        ggQuest newQuest = new ggQuest(string(abi.encodePacked(questsMetadataBaseURI, Strings.toString(questId))), _reputationReward);
+        ggQuest newQuest = new ggQuest(string(abi.encodePacked(questsMetadataBaseURI, Strings.toString(questId))), _reputationReward, profiles);
         quests.push(newQuest);
 
         questIdToGameId[questId] = _gameId;
         gameIdToQuestIds[_gameId].push(questId);
+
+        profiles.addOperator(address(newQuest));
 
         emit CreateQuest(questId, games[_gameId]);
 

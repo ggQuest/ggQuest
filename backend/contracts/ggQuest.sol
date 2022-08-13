@@ -27,15 +27,19 @@ contract ggQuest {
     string public metadataURL;
     uint reputationReward;
     bool public isActive;
-    bool public lockedRewards;
 
-    address[] public completedBy;
+    ggProfiles public profiles;
+
+    address[] public players;
+    mapping(address => bool) public completedBy;
+
     mapping(address => bool) public operators;
     Reward[] public additionalRewards;
 
-    constructor(string memory _metadataURL, uint _reputationReward) {
+    constructor(string memory _metadataURL, uint _reputationReward, ggProfiles _profilesContract) {
         metadataURL = _metadataURL;
         reputationReward = _reputationReward;
+        profiles = ggProfiles(_profilesContract);
         operators[msg.sender] = true;
     }
 
@@ -78,6 +82,8 @@ contract ggQuest {
     * @return rewardID
     **/
     function addReward(Reward memory _reward) external onlyOperator returns (uint){
+        require(!isActive, "Rewards cannot be added after quest activation");
+
         // Verify if rewards are unique (not twice the same ERC721 for example)
         for (uint256 i = 0; i < additionalRewards.length; i++) {
             require(_rewardHash(_reward) != _rewardHash(additionalRewards[i]), "Token contract already used in another reward of the quest");
@@ -115,10 +121,11 @@ contract ggQuest {
     * @param _player player to add
     **/
     function sendReward(address _player) external onlyOperator {
+        require(!completedBy[_player], "Quest already completed by this player");
         Reward memory reward;
         for (uint256 i = 0; i < additionalRewards.length; i++) {
             reward = additionalRewards[i];
-            if(reward.amount <= completedBy.length) {
+            if(reward.amount >= players.length) {
                 if(reward.rewardType == RewardType.ERC20) {
                     ERC20 token = ERC20(reward.rewardContract);
                     token.transfer(_player, reward.tokenAmount);
@@ -132,7 +139,9 @@ contract ggQuest {
                 }
             }
         }
-        completedBy.push(_player);
+        players.push(_player);
+        completedBy[_player] = true;
+        profiles.increaseReputation(_player, reputationReward);
         emit SendReward(_player, reward);
     }
 
@@ -151,7 +160,6 @@ contract ggQuest {
     **/
     function activateQuest() external onlyOperator {
         isActive = true;
-        lockedRewards = true;
         emit ActivateQuest();
     }
 

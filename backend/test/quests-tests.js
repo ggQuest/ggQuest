@@ -5,36 +5,45 @@ describe("ggQuests", function () {
   
     before(async function() {
         [deployer,account1,account2, account3,trashAccount] = await ethers.getSigners();
-        const ProfilesSBTs = await hre.ethers.getContractFactory("ggProfiles");
-        this.profilesSBTs = await ProfilesSBTs.deploy("ggProfiles", "GGP");
-        await this.profilesSBTs.deployed();
+        const ggProfilesContract = await hre.ethers.getContractFactory("ggProfiles");
+        this.ggProfiles = await ggProfilesContract.deploy("ggProfiles", "GGP");
+        await this.ggProfiles.deployed();
 
         const ggQuestsContract = await hre.ethers.getContractFactory("ggQuests");
-        this.ggQuests = await ggQuestsContract.deploy(this.profilesSBTs.address, "https://gg.quest/api/quests/", "https://gg.quest/api/games/");
+        this.ggQuests = await ggQuestsContract.deploy(this.ggProfiles.address, "https://gg.quest/api/quests/", "https://gg.quest/api/games/");
         await this.ggQuests.deployed();
+        await this.ggProfiles.addOperator(this.ggQuests.address);
 
         const FooToken = await hre.ethers.getContractFactory("ERC20Token");
         this.fooToken = await FooToken.deploy("FooToken", "FTK", 1000);
         await this.fooToken.deployed();
+
+        const BarToken = await hre.ethers.getContractFactory("ERC20Token");
+        this.barToken = await BarToken.deploy("BarToken", "BTK", 1000);
+        await this.fooToken.deployed();
+
+        await this.ggProfiles.mint(["deployer", "", ""]);
+        await this.ggProfiles.connect(account1).mint(["account1", "", ""]);
+        await this.ggProfiles.connect(account2).mint(["account2", "", ""]);
     });
 
     describe("Operators", function () {
         it("Operator should add operator", async function () {
-            await this.profilesSBTs.addOperator(trashAccount.address);
-            expect(await this.profilesSBTs.isOperator(trashAccount.address)).to.be.true;
+            await this.ggProfiles.addOperator(trashAccount.address);
+            expect(await this.ggProfiles.isOperator(trashAccount.address)).to.be.true;
         });
 
         it("Operator should remove operator", async function () {
-            await this.profilesSBTs.removeOperator(trashAccount.address);
-            expect(await this.profilesSBTs.isOperator(trashAccount.address)).to.be.false;
+            await this.ggProfiles.removeOperator(trashAccount.address);
+            expect(await this.ggProfiles.isOperator(trashAccount.address)).to.be.false;
         });
 
         it("Non-operator should not add operator", async function () {
-            expect(this.profilesSBTs.connect(account1).addOperator(trashAccount.address)).to.be.revertedWith("Only operators can call this function")
+            expect(this.ggProfiles.connect(account1).addOperator(trashAccount.address)).to.be.revertedWith("Only operators can call this function")
         });
 
         it("Non-operator should not remove operator", async function () {
-            expect(this.profilesSBTs.connect(account1).removeOperator(deployer.address)).to.be.revertedWith("Only operators can call this function");
+            expect(this.ggProfiles.connect(account1).removeOperator(deployer.address)).to.be.revertedWith("Only operators can call this function");
         });
     })
 
@@ -100,25 +109,25 @@ describe("ggQuests", function () {
         it("Should not add reward with same token as existing reward", async function () {
             await this.fooToken.transfer(this.quest0.address, 400);
             await expect(this.quest0.addReward([0, this.fooToken.address, 40, 10, 0])).to.be.revertedWith("Token contract already used in another reward of the quest");
-        });
-
-        it("Should remove reward", async function () {
-            // TODO
+        });        
+        
+        it("Should not add rewards after activation", async function () {
+            await this.quest0.activateQuest();
+            this.barToken.transfer(this.quest0.address, 200);
+            await expect(this.quest0.addReward([0, this.barToken.address, 20, 10, 0])).to.revertedWith("Rewards cannot be added after quest activation");
         });
 
         it("Should send reward and reputation when completed", async function () {
+            await this.quest0.sendReward(account1.address);
+            expect(await this.fooToken.balanceOf(account1.address)).to.be.equal(20);
+            expect((await this.ggProfiles.getReputation(account1.address))[0]).to.be.equal(15);
+        });
+
+        it("Should not send reward and reputation if already completed", async function () {
             // TODO
         });
         
         it("Should update reputation reward", async function () {
-            // TODO
-        });
-
-        it("Should send reward when completed", async function () {
-            // TODO
-        });
-
-        it("Should not add or remove rewards after activation", async function () {
             // TODO
         });
 
