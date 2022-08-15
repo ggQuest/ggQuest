@@ -20,11 +20,18 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
  * @type import('hardhat/config').HardhatUserConfig
  */
 module.exports = {
-  solidity: "0.8.4",
+  solidity: {
+    version: "0.8.4",
+    settings: {
+      optimizer: {
+        enabled: true,
+        runs: 1000
+      },
+    }
+  },
   paths: {
     artifacts: './src/artifacts'
   },
-  defaultNetwork: "mumbai",
   networks: {
     mumbai: {
       url: `https://polygon-mumbai.infura.io/v3/${process.env.INFURA_PROJECT_ID}`,
