@@ -1,9 +1,19 @@
-const dataProvider = require('./dataProvider.js')
 const express = require('express')
 const cors = require('cors')
 const app = express()
 
 app.use(cors());
+
+const db = require("./models");
+const questsController = require("./controller/quest.controller.js");
+const gamesController = require("./controller/game.controller.js");
+db.sequelize.sync()
+  .then(() => {
+    console.log("Synced db.");
+  })
+  .catch((err) => {
+    console.log("Failed to sync db: " + err.message);
+  });
 
 const port = 8080
 
@@ -12,23 +22,8 @@ app.get('/', (req, res) => {
 })
 
 app.get('/api/quests', async (req, res) => {
-  res.status(200).json(await dataProvider.getQuests());
+  res.status(200).json(await questsController.findAll());
 })
-
-app.get('/api/quests/:id', (req,res) => {
-  const id = parseInt(req.params.id)
-  res.status(200).json(dataProvider.getQuestsById(id));
-})
-
-app.get('/api/reputation_scores', (req, res) => {
-  res.status(200).json(dataProvider.getReputationScores());
-})
-
-app.get('/api/reputation_scores/:address', async (req, res) => {
-  const address = req.params.address
-  res.status(200).json(await dataProvider.getReputationScoresByAddress(address))
-})
-
 
 app.listen(port, () => {
   console.log(`ggQuest Server now listening on port ${port}`)

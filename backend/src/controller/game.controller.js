@@ -1,0 +1,28 @@
+const db = require("../models");
+const Game = db.games;
+const Quest = db.quests;
+
+exports.createGame = (game) => {
+    return Game.create({
+      name: game.name,
+      description: game.description,
+      websiteURL: game.websiteURL,
+      thumbnailImageURL: game.thumbnailImageURL,
+      imageURL: game.imageURL,
+      coverImageURL: game.coverImageURL,
+      dateCreated: game.dateCreated
+    })
+      .then((comment) => {
+        console.log(">> Created game: " + JSON.stringify(comment, null, 4));
+        return comment;
+      })
+      .catch((err) => {
+        console.log(">> Error while creating game: ", err);
+      });
+  };
+
+  exports.findAll = () => {
+    return Tutorial.findAll().then((games) => {
+      return games;
+    });
+  };
