@@ -6,13 +6,16 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 /**
  * @title ggQuest
  * @author h0tmilk
  * @notice ggQuest is deployed by ggQuests
  */
-contract ggQuest {
+contract ggQuest is ReentrancyGuard {
+
+    using SafeMath for uint;
 
     enum RewardType { ERC20, ERC721, ERC1155 }
 
@@ -25,7 +28,7 @@ contract ggQuest {
     }
 
     string public metadataURL;
-    uint reputationReward;
+    uint public reputationReward;
     bool public isActive;
 
     ggProfiles public profiles;
@@ -81,7 +84,7 @@ contract ggQuest {
     * @param _reward reward struct to add
     * @return rewardID
     **/
-    function addReward(Reward memory _reward) external onlyOperator returns (uint){
+    function addReward(Reward memory _reward) external onlyOperator nonReentrant returns (uint) {
         require(!isActive, "Rewards cannot be added after quest activation");
 
         // Verify if rewards are unique (not twice the same ERC721 for example)
@@ -90,6 +93,16 @@ contract ggQuest {
         }
 
         // Verify if the quest contract owns enough tokens to distribute the reward
+        _verifyTokenOwnershipFor(_reward);
+
+        // Add reward to quest
+        additionalRewards.push(_reward);
+        emit AddReward(_reward);
+
+        return additionalRewards.length-1;
+    }
+
+    function _verifyTokenOwnershipFor(Reward memory _reward) private view {
         if(_reward.rewardType == RewardType.ERC20) {
             ERC20 token = ERC20(_reward.rewardContract);
             require(token.balanceOf(address(this)) >= _reward.tokenAmount * _reward.amount, 
@@ -98,18 +111,11 @@ contract ggQuest {
             ERC721 token = ERC721(_reward.rewardContract);
             require(token.ownerOf(_reward.id) == address(this), "ggQuests contract doesn't own this ERC721 token");
             require(_reward.tokenAmount == 1 && _reward.amount == 1, "tokenAmount and amount should be 1 as ERC721 is unique");
-
         } else if(_reward.rewardType == RewardType.ERC1155) {
             ERC1155 token = ERC1155(_reward.rewardContract);
             require(token.balanceOf(address(this), _reward.id) >= _reward.tokenAmount * _reward.amount, 
                 "ggQuests contract doesn't own enough tokens");
         }
-
-        // Add reward to quest
-        additionalRewards.push(_reward);
-        emit AddReward(_reward);
-
-        return additionalRewards.length-1;
     }
 
     function getRewards() external view returns (Reward[] memory) {
@@ -123,9 +129,11 @@ contract ggQuest {
     function sendReward(address _player) external onlyOperator {
         require(!completedBy[_player], "Quest already completed by this player");
         Reward memory reward;
+        bool hadAtLeast1Reward = false;
         for (uint256 i = 0; i < additionalRewards.length; i++) {
             reward = additionalRewards[i];
-            if(reward.amount >= players.length) {
+            if(reward.amount > players.length) {
+                hadAtLeast1Reward = true;
                 if(reward.rewardType == RewardType.ERC20) {
                     ERC20 token = ERC20(reward.rewardContract);
                     token.transfer(_player, reward.tokenAmount);
@@ -139,10 +147,36 @@ contract ggQuest {
                 }
             }
         }
+        require(hadAtLeast1Reward, "All rewards have been distributed");
         players.push(_player);
         completedBy[_player] = true;
         profiles.increaseReputation(_player, reputationReward);
         emit SendReward(_player, reward);
+    }
+
+    /**
+    * @notice Increase the number of rewards available
+    * @param _reward new reward data
+    **/
+    function increaseRewardAmount(uint _amount, Reward memory _reward) external{
+        // Identify the reward and update it
+        bool exists;
+        for (uint256 i = 0; i < additionalRewards.length; i++) {
+            if(_rewardHash(additionalRewards[i]) == _rewardHash(_reward)) {
+                exists = true;
+
+                // Verify if the quest contract owns enough tokens to distribute the reward
+                Reward memory testReward = additionalRewards[i]; // same reward but updates amount considering number of already won rewards
+                testReward.amount = (testReward.amount.add(_amount)).sub(players.length);
+                _verifyTokenOwnershipFor(testReward);
+
+                // Update the reward amount
+                additionalRewards[i].amount = additionalRewards[i].amount.add(_amount);
+
+            }
+        }
+        require(exists, "Given reward (token address) doesn't exist for this quest");
+
     }
 
     /**

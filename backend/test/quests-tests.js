@@ -100,21 +100,20 @@ describe("ggQuests", function () {
         });
 
         it("Should add reward", async function () {
-            await this.fooToken.transfer(this.quest0.address, 200);
-            await expect(this.quest0.addReward([0, this.fooToken.address, 20, 10, 0])).to.not.reverted;
+            await expect(this.quest0.addReward([0, this.fooToken.address, 20, 1, 0])).to.not.reverted;
 
             expect((await this.quest0.getRewards()).length).to.be.equal(1);
         });
 
         it("Should not add reward with same token as existing reward", async function () {
-            await this.fooToken.transfer(this.quest0.address, 400);
-            await expect(this.quest0.addReward([0, this.fooToken.address, 40, 10, 0])).to.be.revertedWith("Token contract already used in another reward of the quest");
+            await this.fooToken.transfer(this.quest0.address, 1);
+            await expect(this.quest0.addReward([0, this.fooToken.address, 1, 1, 0])).to.be.revertedWith("Token contract already used in another reward of the quest");
         });        
         
         it("Should not add rewards after activation", async function () {
             await this.quest0.activateQuest();
-            this.barToken.transfer(this.quest0.address, 200);
-            await expect(this.quest0.addReward([0, this.barToken.address, 20, 10, 0])).to.revertedWith("Rewards cannot be added after quest activation");
+            this.barToken.transfer(this.quest0.address, 20);
+            await expect(this.quest0.addReward([0, this.barToken.address, 20, 1, 0])).to.revertedWith("Rewards cannot be added after quest activation");
         });
 
         it("Should send reward and reputation when completed", async function () {
@@ -123,24 +122,35 @@ describe("ggQuests", function () {
             expect((await this.ggProfiles.getReputation(account1.address))[0]).to.be.equal(15);
         });
 
+        it("Should revert if no more reward available", async function () {
+            await expect(this.quest0.sendReward(account2.address)).to.be.revertedWith("All rewards have been distributed");
+            expect(await this.fooToken.balanceOf(account2.address)).to.be.equal(0);
+            expect((await this.ggProfiles.getReputation(account2.address))[0]).to.be.equal(0);
+        });
+
+        it("Should not update quest reward if not enough tokens", async function () {
+            await expect(this.quest0.increaseRewardAmount(5, [0, this.fooToken.address, 0, 0, 0])).to.be.revertedWith("ggQuest contract doesn't own enough tokens");
+        });
+
+        it("Should update quest reward", async function () {
+            await this.fooToken.transfer(this.quest0.address, 100);
+            await this.quest0.increaseRewardAmount(5, [0, this.fooToken.address, 0, 0, 0]);
+        });
+
         it("Should not send reward and reputation if already completed", async function () {
-            // TODO
+            await expect(this.quest0.sendReward(account1.address)).to.be.revertedWith("Quest already completed by this player");
         });
         
         it("Should update reputation reward", async function () {
-            // TODO
+            await this.quest0.updateReputationReward(30);
+            expect(await this.quest0.reputationReward()).to.been.equal(30);
         });
 
         it("Should withdraw all remaining rewards after deactivation", async function () {
-            // TODO
-        });
-
-        it("Should correctly log addresses who completed the quest", async function () {
-            // TODO
-        });
-
-        it("Should only allow operators on quests functions", async function () {
-            // TODO
+            const initialBalance = await this.fooToken.balanceOf(this.quest0.address);
+            await this.quest0.deactivateQuest(account2.address);
+            expect(await this.fooToken.balanceOf(this.quest0.address)).to.be.equal(0);
+            expect(await this.fooToken.balanceOf(account2.address)).to.be.equal(initialBalance);
         });
     })
 });
