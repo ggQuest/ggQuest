@@ -90,6 +90,11 @@ contract ggQuests {
         return questId;
     }
 
+    function getQuestAddress(uint _questId) external view returns (ggQuest) {
+        require(quests.length > _questId, "QuestID does not exist");
+        return quests[_questId];
+    }
+
     function getQuestURI(uint _questId) external view returns (string memory) {
         require(quests.length > _questId, "QuestID does not exist");
         return ggQuest(quests[_questId]).getQuestURI();

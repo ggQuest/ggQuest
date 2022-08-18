@@ -110,6 +110,7 @@ contract ggProfiles {
         require(!profiles[msg.sender].isRegistered, "Profile already registered");
         _setUserData(msg.sender, _userData);
         profiles[msg.sender].isRegistered = true;
+        registeredAddresses.push(msg.sender);
 
         emit Mint(msg.sender, _userData.pseudo);
     }
@@ -174,6 +175,14 @@ contract ggProfiles {
     **/
     function getReputation(address _userAddress) external view returns (uint, uint) {
         return (profiles[_userAddress].gainedReputation, profiles[_userAddress].lostReputation);
+    }
+
+    /**
+    * @notice Get the registered addresses
+    * @return array of registered addresses
+    **/
+    function getRegisteredAddresses() external view returns(address[] memory) {
+        return registeredAddresses;
     }
 
     /** 
