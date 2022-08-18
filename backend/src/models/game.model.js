@@ -1,5 +1,10 @@
 module.exports = (sequelize, Sequelize) => {
     const Game = sequelize.define("game", {
+        id: {
+            type: Sequelize.INTEGER,
+            autoIncrement: false,
+            primaryKey: true
+        },
         name: {
             type: Sequelize.STRING,
             allowNull: false
@@ -22,10 +27,6 @@ module.exports = (sequelize, Sequelize) => {
         },
         coverImageURL: {
             type: Sequelize.STRING,
-            allowNull: false
-        },
-        dateCreated: {
-            type: Sequelize.DATE,
             allowNull: false
         }
     });

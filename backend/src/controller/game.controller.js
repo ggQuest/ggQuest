@@ -4,25 +4,27 @@ const Quest = db.quests;
 
 exports.createGame = (game) => {
     return Game.create({
+      id: game.id,
       name: game.name,
       description: game.description,
       websiteURL: game.websiteURL,
       thumbnailImageURL: game.thumbnailImageURL,
       imageURL: game.imageURL,
-      coverImageURL: game.coverImageURL,
-      dateCreated: game.dateCreated
+      coverImageURL: game.coverImageURL
     })
       .then((comment) => {
         console.log(">> Created game: " + JSON.stringify(comment, null, 4));
-        return comment;
+        return game;
       })
       .catch((err) => {
         console.log(">> Error while creating game: ", err);
       });
   };
 
+  exports.find = (gameId) => {
+    return Game.findOne({ where: { id: gameId }});
+  };
+
   exports.findAll = () => {
-    return Tutorial.findAll().then((games) => {
-      return games;
-    });
+    return Game.findAll();
   };

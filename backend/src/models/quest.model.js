@@ -19,10 +19,6 @@ module.exports = (sequelize, Sequelize) => {
         imageURL: {
             type: Sequelize.STRING,
             allowNull: false
-        },
-        dateCreated: {
-            type: Sequelize.DATE,
-            allowNull: false
         }
     });
     return Quest;

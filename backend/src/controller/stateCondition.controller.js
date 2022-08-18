@@ -1,27 +1,23 @@
 const db = require("../models");
 const StateCondition = db.stateCondition;
 
-exports.createStateCondition = (stateCondition, operatorId) => {  
+exports.createStateCondition = (stateCondition) => {  
   return StateCondition.create({
         from: stateCondition.from,
         to: stateCondition.to,
         data: stateCondition.data,
         compareWith: stateCondition.compareWith,
-        operatorId: operatorId
+        operator: stateCondition.operator
     })
-      .then((quest) => {
-        console.log(">> Created quest: " + JSON.stringify(quest, null, 4));
-        return quest;
+      .then((stateCondition) => {
+        console.log(">> Created condition: " + JSON.stringify(quest, null, 4));
+        return stateCondition;
       })
       .catch((err) => {
-        console.log(">> Error while creating quest: ", err);
+        console.log(">> Error while creating condition: ", err);
       });
 };
 
 exports.findAll = () => {
-    return StateCondition.findAll({
-      include: ["operator"],
-    }).then((quests) => {
-      return quests;
-    });
+    return StateCondition.findAll();
   };

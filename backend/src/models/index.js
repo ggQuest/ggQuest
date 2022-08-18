@@ -17,7 +17,6 @@ db.sequelize = sequelize;
 db.games = require("./game.model.js")(sequelize, Sequelize);
 db.quests = require("./quest.model.js")(sequelize, Sequelize);
 db.stateCondition = require("./stateCondition.model.js")(sequelize, Sequelize);
-db.operator = require("./operator.model.js")(sequelize, Sequelize);
 db.quests.hasOne(db.games, {
   foreignKey: "gameId",
   as: "game",
@@ -25,9 +24,5 @@ db.quests.hasOne(db.games, {
 db.quests.hasOne(db.stateCondition, {
   foreignKey: "stateConditionId",
   as: "stateCondition",
-});
-db.stateCondition.hasOne(db.operator, {
-  foreignKey: "operatorId",
-  as: "operator",
 });
 module.exports = db;

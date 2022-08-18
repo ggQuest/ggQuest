@@ -12,14 +12,14 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.STRING,
             allowNull: false
         },
-        data: {
-            type: Sequelize.STRING,
-            allowNull: false
-        },
         compareWith: {
             type: Sequelize.STRING,
             allowNull: false
-        }        
+        },
+        operator: {
+            type: Sequelize.STRING,
+            allowNull: false
+        }     
     });
     return StateCondition;
 };

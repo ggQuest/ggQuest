@@ -8,7 +8,6 @@ exports.createQuest = (gameId, stateConditionId, quest) => {
         description: quest.description,
         thumbnailImageURL: quest.thumbnailImageURL,
         imageURL: quest.imageURL,
-        dateCreated: quest.dateCreated,
         gameId: gameId,
         stateConditionId: stateConditionId
     })
@@ -22,9 +21,17 @@ exports.createQuest = (gameId, stateConditionId, quest) => {
 };
 
 exports.findAll = () => {
-    return Quest.findAll({
-      include: ["game"],
-    }).then((quests) => {
-      return quests;
-    });
-  };
+  return Quest.findAll({
+    include: ["game"],
+  }).then((quests) => {
+    return quests;
+  });
+};
+
+exports.find = (questId) => {
+  return Quest.findOne({ where: { id: questId }});
+};
+
+exports.findAll = (questId) => {
+  return Quest.findOne({ where: { id: questId }});
+};
