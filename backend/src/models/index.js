@@ -16,13 +16,15 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 db.games = require("./game.model.js")(sequelize, Sequelize);
 db.quests = require("./quest.model.js")(sequelize, Sequelize);
-db.stateCondition = require("./stateCondition.model.js")(sequelize, Sequelize);
-db.quests.hasOne(db.games, {
+db.stateConditions = require("./stateCondition.model.js")(sequelize, Sequelize);
+db.games.hasMany(db.quests, { as: "quests" });
+db.quests.belongsTo(db.games, {
   foreignKey: "gameId",
   as: "game",
 });
-db.quests.hasOne(db.stateCondition, {
-  foreignKey: "stateConditionId",
-  as: "stateCondition",
+db.quests.hasMany(db.stateConditions, { as: "stateConditions" });
+db.stateConditions.belongsTo(db.quests, {
+  foreignKey: "questId",
+  as: "quest",
 });
 module.exports = db;

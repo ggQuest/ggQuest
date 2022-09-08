@@ -1,16 +1,17 @@
 const db = require("../models");
-const StateCondition = db.stateCondition;
+const StateCondition = db.stateConditions;
 
 exports.createStateCondition = (stateCondition) => {  
   return StateCondition.create({
-        from: stateCondition.from,
-        to: stateCondition.to,
-        data: stateCondition.data,
+        contract: stateCondition.contract,
+        function: stateCondition.function,
+        parameters: stateCondition.parameters,
         compareWith: stateCondition.compareWith,
-        operator: stateCondition.operator
+        operator: stateCondition.operator,
+        questId: stateCondition.questId
     })
       .then((stateCondition) => {
-        console.log(">> Created condition: " + JSON.stringify(quest, null, 4));
+        console.log(">> Created condition: " + JSON.stringify(stateCondition, null, 4));
         return stateCondition;
       })
       .catch((err) => {

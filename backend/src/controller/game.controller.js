@@ -21,6 +21,11 @@ exports.createGame = (game) => {
       });
   };
 
+  exports.updateGame = (gameId, game) => {
+    Game.update(game, { where: { id: gameId } });
+    return game;
+  }
+
   exports.find = (gameId) => {
     return Game.findOne({ where: { id: gameId }});
   };

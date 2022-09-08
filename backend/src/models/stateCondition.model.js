@@ -1,16 +1,22 @@
 module.exports = (sequelize, Sequelize) => {
     const StateCondition = sequelize.define("stateCondition", {
-        from: {
+        contract: {
             type: Sequelize.STRING,
             allowNull: false
         },
-        to: {
+        function: {
             type: Sequelize.STRING,
             allowNull: false
         },
-        data: {
+        parameters: {
             type: Sequelize.STRING,
-            allowNull: false
+            allowNull: false,
+            get() {
+                return this.getDataValue('parameters').split(',')
+            },
+            set(val) {
+               this.setDataValue('parameters',val.join(','));
+            }
         },
         compareWith: {
             type: Sequelize.STRING,

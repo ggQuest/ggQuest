@@ -1,15 +1,13 @@
 const db = require("../models");
 const Quest = db.quests;
 
-exports.createQuest = (gameId, stateConditionId, quest) => {
+exports.createQuest = (quest) => {
     return Quest.create({
-        address: quest.address,
         title: quest.title,
         description: quest.description,
         thumbnailImageURL: quest.thumbnailImageURL,
         imageURL: quest.imageURL,
-        gameId: gameId,
-        stateConditionId: stateConditionId
+        gameId: quest.gameId
     })
       .then((quest) => {
         console.log(">> Created quest: " + JSON.stringify(quest, null, 4));
@@ -20,18 +18,30 @@ exports.createQuest = (gameId, stateConditionId, quest) => {
       });
 };
 
+exports.updateQuest = (questId, quest) => {
+  Quest.update(quest, {
+    where: { id: questId }
+  })
+    .then(num => {
+      return num == 1; // true if successful false is unseccessful
+    })
+    .catch(err => {
+      console.log("Error updating Quest with id=" + id);
+      return false;
+    });
+};
+
 exports.findAll = () => {
   return Quest.findAll({
-    include: ["game"],
+    include: ["game", "stateConditions"]
   }).then((quests) => {
     return quests;
   });
 };
 
 exports.find = (questId) => {
-  return Quest.findOne({ where: { id: questId }});
-};
-
-exports.findAll = (questId) => {
-  return Quest.findOne({ where: { id: questId }});
+  return Quest.findOne({ 
+    where: { id: questId },
+    include: ["game", "stateConditions"]
+  });
 };
