@@ -4,7 +4,7 @@ const cors = require('cors')
 const app = express()
 const jsonParser = bodyParser.json()
 const urlencodedParser = bodyParser.urlencoded({ extended: false })
-
+ 
 const version = "v1"
 
 app.use(cors());
@@ -59,6 +59,11 @@ app.put('/api/' + version + '/quests/:id', jsonParser, async (req, res) => {
 
 app.post('/api/' + version + '/quests/:questId/rewards', async (req, res) => {
   res.status(200).json(await server.addRewardToQuest(req.params.questId, req.body));
+})
+
+// TODO : VERIFY IF USER METS ALL REQUIREMENTS TO GET REWARD
+app.post('/api/' + version + '/quests/:questId/verify', async (req, res) => {
+  res.status(200).json(await server.verifyReward(req.params.questId, req.body));
 })
 
 app.listen(port, () => {
