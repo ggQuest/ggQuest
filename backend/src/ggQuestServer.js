@@ -157,7 +157,24 @@ module.exports = {
     // add onchain data (read onchain)
     questMetadata.completedBy = await quest.getPlayers();
     questMetadata.reputationReward = await quest.reputationReward();
-    questMetadata.rewards = await quest.getRewards();
+    let rawRewards = await quest.getRewards();
+    rawRewards.forEach(rawReward => {
+      switch (rawReward[0]) {
+        case 0:
+          questMetadata.rewardType = "ERC20";
+          break;
+        case 1:
+          questMetadata.rewardType = "ERC721";
+          break;
+        case 2:
+          questMetadata.rewardType = "ERC1155";
+        break;
+      }
+      questMetadata.rewardContract = rawReward[1];
+      questMetadata.tokenAmount = rawReward[2];
+      questMetadata.amount = rawReward[3];
+      questMetadata.tokenId = rawReward[4];
+    });
 
     return questMetadata;
   },
