@@ -4,6 +4,8 @@ pragma solidity ^0.8.0;
 import "./ggProfiles.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "./ERC721Receiver.sol";
+import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
@@ -13,7 +15,7 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
  * @author h0tmilk
  * @notice ggQuest is deployed by ggQuests
  */
-contract ggQuest is ReentrancyGuard {
+contract ggQuest is ReentrancyGuard, ERC721Receiver, ERC1155Holder {
 
     using SafeMath for uint;
 
@@ -79,6 +81,10 @@ contract ggQuest is ReentrancyGuard {
         return operators[_address];
     }
 
+    function getPlayers() external view returns (address[] memory) {
+        return players;
+    }
+
     /**
     * @notice Add additional reward to quest
     * @param _reward reward struct to add
@@ -105,7 +111,7 @@ contract ggQuest is ReentrancyGuard {
     function _verifyTokenOwnershipFor(Reward memory _reward) private view {
         if(_reward.rewardType == RewardType.ERC20) {
             ERC20 token = ERC20(_reward.rewardContract);
-            require(token.balanceOf(address(this)) >= _reward.tokenAmount * _reward.amount, 
+            require(token.balanceOf(address(this)) >= _reward.tokenAmount.mul(_reward.amount), 
                 "ggQuest contract doesn't own enough tokens");
         } else if(_reward.rewardType == RewardType.ERC721) {
             ERC721 token = ERC721(_reward.rewardContract);
@@ -113,7 +119,7 @@ contract ggQuest is ReentrancyGuard {
             require(_reward.tokenAmount == 1 && _reward.amount == 1, "tokenAmount and amount should be 1 as ERC721 is unique");
         } else if(_reward.rewardType == RewardType.ERC1155) {
             ERC1155 token = ERC1155(_reward.rewardContract);
-            require(token.balanceOf(address(this), _reward.id) >= _reward.tokenAmount * _reward.amount, 
+            require(token.balanceOf(address(this), _reward.id) >= _reward.tokenAmount.mul(_reward.amount), 
                 "ggQuests contract doesn't own enough tokens");
         }
     }
