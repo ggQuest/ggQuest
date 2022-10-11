@@ -109,11 +109,18 @@ module.exports = {
     // Create quest on chain
     const ggQuestsContract = await hre.ethers.getContractFactory("ggQuests");
     const ggQuests = ggQuestsContract.attach(addresses.ggQuests);
-    //let questCreateTx = await ggQuests.createQuest(quest.reputationReward, quest.gameId);
-    //await hre.ethers.provider.waitForTransaction(questCreateTx.hash);
+    let questCreateTx = await ggQuests.createQuest(quest.reputationReward, quest.gameId);
+    await hre.ethers.provider.waitForTransaction(questCreateTx.hash);
+
+    let questOnchainId = (await ggQuests.getQuests()).length-1;
+
+    // Get the created quest contract address onchain
+    let questAddress = await ggQuests.getQuestAddress(questOnchainId);
 
     // Create quest offchain
     let parsedQuest = {
+      address: questAddress,
+      onchainId: questOnchainId,
       title: quest.title,
       description: quest.description,
       thumbnailImageURL: quest.thumbnailImageURL,
@@ -121,30 +128,38 @@ module.exports = {
       gameId: quest.gameId
     }
     let createdQuest = await questsController.createQuest(parsedQuest);
-    let questId = createdQuest.id;
-
-    // Fix first auto increment to 1 and not 0
-    // TODO
-
-    // Get the created quest contract address onchain
-    let questAddress = await ggQuests.getQuestAddress(questId);
-    let questUpdate = { address: questAddress }
-    questsController.updateQuest(questId, questUpdate);
 
     // Create the state conditions
     quest.stateConditions.forEach(stateCondition => {
-      stateCondition.questId = questId;
+      stateCondition.questId = createdQuest.id;
       stateConditionController.createStateCondition(stateCondition);
     });
 
     // Add the stateConditions and address to the response
-    let response = questsController.find(questId);
-    return response;
+    return questsController.find(createdQuest.id);
   },
 
   updateQuest: async function(questId, quest) {
-    console.log(quest);
+    let dbQuest = questsController.find(questId)
+    if(quest.gameId != null && quest.gameId != dbQuest.gameId) {
+      throw 'Game ID cannot be changed.' 
+    }
+    quest.stateConditions.forEach(stateCondition => {
+      stateConditionController.updateStateCondition(stateCondition.id, stateCondition);
+    });
     let updatedQuest = questsController.updateQuest(questId, quest);
+    return updatedQuest;
+  },
+
+  updateQuestByOnchainId: async function(questId, quest) {
+    let dbQuest = await questsController.findByOnchainId(questId)
+    if(quest.gameId != null && quest.gameId != dbQuest.gameId) {
+      throw 'Game ID cannot be changed.' 
+    }
+    quest.stateConditions.forEach(stateCondition => {
+      stateConditionController.updateStateCondition(stateCondition.id, stateCondition);
+    });
+    let updatedQuest = questsController.updateQuestByOnchainId(questId, quest);
     return updatedQuest;
   },
 
@@ -160,14 +175,85 @@ module.exports = {
     // add onchain data (read onchain)
     questMetadata.completedBy = await quest.getPlayers();
     questMetadata.reputationReward = await quest.reputationReward();
-    questMetadata.rewards = await quest.getRewards();
+    let rawRewards = await quest.getRewards();
+    rawRewards.forEach(rawReward => {
+      switch (rawReward[0]) {
+        case 0:
+          questMetadata.rewardType = "ERC20";
+          break;
+        case 1:
+          questMetadata.rewardType = "ERC721";
+          break;
+        case 2:
+          questMetadata.rewardType = "ERC1155";
+        break;
+      }
+      questMetadata.rewardContract = rawReward[1];
+      questMetadata.tokenAmount = rawReward[2];
+      questMetadata.amount = rawReward[3];
+      questMetadata.tokenId = rawReward[4];
+    });
+
+    return questMetadata;
   },
 
-  addReward: async function(questId, reward) {
-    let address = questsController.find(questId).address;
+  getQuestByOnchainId: async function(questId) {
+    let questMetadata = await questsController.findByOnchainId(questId);
+
+    const questContract = await hre.ethers.getContractFactory("ggQuest");
+    const quest = questContract.attach(questMetadata.address);
+    // add onchain data (read onchain)
+    questMetadata.completedBy = await quest.getPlayers();
+    questMetadata.reputationReward = await quest.reputationReward();
+
+    let rawRewards = await quest.getRewards();
+    rawRewards.forEach(rawReward => {
+      switch (rawReward[0]) {
+        case 0:
+          questMetadata.rewardType = "ERC20";
+          break;
+        case 1:
+          questMetadata.rewardType = "ERC721";
+          break;
+        case 2:
+          questMetadata.rewardType = "ERC1155";
+        break;
+      }
+      questMetadata.rewardContract = rawReward[1];
+      questMetadata.tokenAmount = rawReward[2];
+      questMetadata.amount = rawReward[3];
+      questMetadata.tokenId = rawReward[4];
+    });
+    
+
+    return questMetadata;
+  },
+
+  addReward: async function(questOnchainId, reward) {
+    let questById = await questsController.findByOnchainId(questOnchainId);
+    let address = questById.address;
     const questContract = await hre.ethers.getContractFactory("ggQuest");
     const quest = questContract.attach(address);
-
+    
+    let rewardType;
+    switch (reward.rewardType) {
+      case "ERC20":
+        rewardType = 0;
+        break;
+      case "ERC721":
+        rewardType = 1;
+        break;
+      case "ERC1155":
+        rewardType = 2;
+      break;
+    }
+    let rawReward = [
+      rewardType,
+      reward.rewardContract,
+      reward.tokenAmount,
+      reward.amount,
+      reward.id == undefined ? 0 : reward.id
+    ]
     await quest.addReward(reward);
   },
 

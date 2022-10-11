@@ -3,6 +3,9 @@ const Quest = db.quests;
 
 exports.createQuest = (quest) => {
     return Quest.create({
+        id: quest.id,
+        onchainId: quest.onchainId,
+        address: quest.address,
         title: quest.title,
         description: quest.description,
         thumbnailImageURL: quest.thumbnailImageURL,
@@ -31,6 +34,19 @@ exports.updateQuest = (questId, quest) => {
     });
 };
 
+exports.updateQuestByOnchainId = (onChainQuestId, quest) => {
+  Quest.update(quest, {
+    where: { onchainId: onChainQuestId }
+  })
+    .then(num => {
+      return num == 1; // true if successful false is unseccessful
+    })
+    .catch(err => {
+      console.log("Error updating Quest with id=" + id);
+      return false;
+    });
+};
+
 exports.findAll = () => {
   return Quest.findAll({
     include: ["game", "stateConditions"]
@@ -42,6 +58,13 @@ exports.findAll = () => {
 exports.find = (questId) => {
   return Quest.findOne({ 
     where: { id: questId },
+    include: ["game", "stateConditions"]
+  });
+};
+
+exports.findByOnchainId = (onChainQuestId) => {
+  return Quest.findOne({ 
+    where: { onchainId: onChainQuestId },
     include: ["game", "stateConditions"]
   });
 };

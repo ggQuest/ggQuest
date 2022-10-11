@@ -8,7 +8,7 @@ exports.createStateCondition = (stateCondition) => {
         parameters: stateCondition.parameters,
         compareWith: stateCondition.compareWith,
         operator: stateCondition.operator,
-        questId: stateCondition.questId
+        stateConditionId: stateCondition.stateConditionId
     })
       .then((stateCondition) => {
         console.log(">> Created condition: " + JSON.stringify(stateCondition, null, 4));
@@ -17,6 +17,19 @@ exports.createStateCondition = (stateCondition) => {
       .catch((err) => {
         console.log(">> Error while creating condition: ", err);
       });
+};
+
+exports.updateStateCondition = (stateConditionId, stateCondition) => {
+  StateCondition.update(stateCondition, {
+    where: { id: stateConditionId }
+  })
+    .then(num => {
+      return num == 1; // true if successful false is unseccessful
+    })
+    .catch(err => {
+      console.log("Error updating stateCondition with id=" + id);
+      return false;
+    });
 };
 
 exports.findAll = () => {
