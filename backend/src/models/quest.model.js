@@ -2,13 +2,16 @@ module.exports = (sequelize, Sequelize) => {
     const Quest = sequelize.define("quest", {
         id: {
             type: Sequelize.INTEGER,
-            primaryKey: true,
-            autoIncrement: true
+            autoIncrement: true,
+            primaryKey: true
+        },
+        onchainId: {
+            type: Sequelize.INTEGER,
+            allowNull: false
         },
         address: {
             type: Sequelize.STRING,
-            defaultValue: null,
-            allowNull: true
+            allowNull: false
         },
         title: {
             type: Sequelize.STRING,
@@ -26,9 +29,6 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.STRING,
             allowNull: false
         }
-    },
-    {
-      initialAutoIncrement: 0
     });
     return Quest;
 };
