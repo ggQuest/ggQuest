@@ -179,6 +179,11 @@ app.put('/api/' + version + '/games/:id', jsonParser, async (req, res) => {
  * Server
 */
 
+// TODO : VERIFY IF USER METS ALL REQUIREMENTS TO GET REWARD
+app.post('/api/' + version + '/quests/:questId/verify', async (req, res) => {
+  res.status(200).json(await server.verifyReward(req.params.questId, req.body));
+})
+
 app.listen(port, () => {
   console.log(`ggQuest Server now listening on port ${port}`)
 })

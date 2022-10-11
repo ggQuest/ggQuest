@@ -1,8 +1,16 @@
 const hre = require("hardhat");
 const db = require("./models");
+const Web3 = require('web3');
+
+//Web3 init
+const walletPrivateKey = process.env.walletPrivateKey;
+const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
+const myAcc = web3.eth.accounts.wallet.add(walletPrivateKey);
+
 const questsController = require("./controller/quest.controller.js");
 const gamesController = require("./controller/game.controller.js");
 const stateConditionController = require("./controller/stateCondition.controller.js");
+
 db.sequelize.sync()
   .then(() => {
     console.log("Synced db.");
@@ -24,6 +32,16 @@ var ggQuests = ggQuestsContract.attach(addresses.ggQuests);
 
 var ggQuestContract = await hre.ethers.getContractFactory("ggQuest");
 */
+
+// extract params from func
+var ARGUMENT_NAMES = /([^\s,]+)/g;
+function getParamNames(fnStr) {
+  var result = fnStr.slice(fnStr.indexOf('(')+1, fnStr.indexOf(')')).match(ARGUMENT_NAMES);
+  if(result === null)
+     result = [];
+  return result;
+}
+
 module.exports = {
   getProfile: async function(address) {
     var ggProfilesContract = await hre.ethers.getContractFactory("ggProfiles");
@@ -216,7 +234,7 @@ module.exports = {
     let address = questById.address;
     const questContract = await hre.ethers.getContractFactory("ggQuest");
     const quest = questContract.attach(address);
-
+    
     let rewardType;
     switch (reward.rewardType) {
       case "ERC20":
@@ -236,8 +254,103 @@ module.exports = {
       reward.amount,
       reward.id == undefined ? 0 : reward.id
     ]
+    await quest.addReward(reward);
+  },
 
-    await quest.addReward(rawReward);
+  verifyReward: async function(questId, userParams) {
+    // Fetch all requirements that must be met for quest id
+    // Check for each of them if userAddress pass the requirement
+    // get all conditions stored off chain
+
+    const conditions = await stateConditionController.findAll();
+    // keep only the ones tied to the questId asked
+    const filteredCond = conditions.filter(obj=> obj.questId === questId);
+
+    filteredCond.forEach(async (condition) => {
+
+      const contractAddress = condition.questId;
+      const functionToCall = condition.function;
+      const params = condition.parameters;
+      const valueToBeCompared = condition.compareWith;
+      const operand = condition.operator;
+      
+      // replace $arg$ by arg provided in body of api call
+      const finalParams = [];
+      params.forEach((param)=> {
+        if (param.substring(0, 1) === '$') {
+          // remove last and first chars
+          const prop = param.substring(1,param.length-1);
+          // we pull the right param from user params input
+          const value = userParams[prop];
+          finalParams.push(value);
+        }else{
+          finalParams.push(param);
+        }
+      })
+      
+      // ISSUE : it returns a receipt not the value
+      // workaround : add events for getters/view functions inside sol contracts
+
+      const typesArray = getParamNames(functionToCall);
+      const paramsEncoded = await web3.eth.abi.encodeParameters(typesArray, finalParams);
+      const functionEncoded = await web3.eth.abi.encodeFunctionSignature(functionToCall);
+      const data = functionEncoded + paramsEncoded;
+      const dataFinal = data.replace('0x', '');
+
+      // for each condition we must check that functionToCall(params) is [gt gte lt lte eq neq (operand)] than valueToBeCompared)
+      const receipt = await web3.eth.sendTransaction({
+        from: myAcc,
+        to: contractAddress,
+        data: dataFinal
+      });
+      const eventReceipt = await web3.eth.getTransactionReceipt(receipt);
+      // logs contains events emitted by the transaction
+      // we assume all vars are indexed in solidity contracts
+      const topics = eventReceipt.logs[0].topics;
+      const hexString = eventReceipt.logs[0].data;
+
+      // TODO : get inputs ABI 
+      const values = web3.eth.abi.decodeLog(inputs, hexString, topics);
+      
+      // get the first arg which is the value we want
+      const res = Object.values(values)[0];
+
+      switch (operand) {
+        case gt:
+          if(!(res > valueToBeCompared))
+            return false;
+          break;
+
+        case gte:
+          if(!(res >= valueToBeCompared))
+            return false;
+          break;
+
+        case lte:
+          if(!(res <= valueToBeCompared))
+            return false;
+          break;
+
+        case lt:
+          if(!(res < valueToBeCompared))
+            return false;
+          break;
+
+        case neq:
+          if(!(res !== valueToBeCompared))
+            return false;
+          break;
+
+        case eq:
+          if(!(res === valueToBeCompared))
+            return false;
+          break;
+
+        default:
+          break;
+      }
+    });
+    // everything has been checked for potential discrepancies but if we here its all good
+    return true;
   }
-
 }
