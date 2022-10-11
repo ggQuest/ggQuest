@@ -262,9 +262,7 @@ module.exports = {
     // Check for each of them if userAddress pass the requirement
     // get all conditions stored off chain
 
-    const conditions = await stateConditionController.findAll();
-    // keep only the ones tied to the questId asked
-    const filteredCond = conditions.filter(obj=> obj.questId === questId);
+    const filteredCond = await stateConditionController.findByQuest(questId);
 
     filteredCond.forEach(async (condition) => {
 
@@ -298,51 +296,39 @@ module.exports = {
       const dataFinal = data.replace('0x', '');
 
       // for each condition we must check that functionToCall(params) is [gt gte lt lte eq neq (operand)] than valueToBeCompared)
-      const receipt = await web3.eth.sendTransaction({
-        from: myAcc,
+      let result = await hre.ethers.provider.call({
         to: contractAddress,
         data: dataFinal
       });
-      const eventReceipt = await web3.eth.getTransactionReceipt(receipt);
-      // logs contains events emitted by the transaction
-      // we assume all vars are indexed in solidity contracts
-      const topics = eventReceipt.logs[0].topics;
-      const hexString = eventReceipt.logs[0].data;
-
-      // TODO : get inputs ABI 
-      const values = web3.eth.abi.decodeLog(inputs, hexString, topics);
-      
-      // get the first arg which is the value we want
-      const res = Object.values(values)[0];
 
       switch (operand) {
         case gt:
-          if(!(res > valueToBeCompared))
+          if(!(result > valueToBeCompared))
             return false;
           break;
 
         case gte:
-          if(!(res >= valueToBeCompared))
+          if(!(result >= valueToBeCompared))
             return false;
           break;
 
         case lte:
-          if(!(res <= valueToBeCompared))
+          if(!(result <= valueToBeCompared))
             return false;
           break;
 
         case lt:
-          if(!(res < valueToBeCompared))
+          if(!(result < valueToBeCompared))
             return false;
           break;
 
         case neq:
-          if(!(res !== valueToBeCompared))
+          if(!(result !== valueToBeCompared))
             return false;
           break;
 
         case eq:
-          if(!(res === valueToBeCompared))
+          if(!(result === valueToBeCompared))
             return false;
           break;
 

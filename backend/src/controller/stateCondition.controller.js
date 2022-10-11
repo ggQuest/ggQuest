@@ -32,6 +32,20 @@ exports.updateStateCondition = (stateConditionId, stateCondition) => {
     });
 };
 
+exports.findByQuest = (questId) => {
+  return Quest.findOne({ 
+    where: { questId: questId },
+    include: ["game", "stateConditions"]
+  });
+};
+
+exports.find = (stateConditionId) => {
+  return Quest.findOne({ 
+    where: { id: stateConditionId },
+    include: ["game", "stateConditions"]
+  });
+};
+
 exports.findAll = () => {
     return StateCondition.findAll();
   };
