@@ -4,6 +4,8 @@ const cors = require('cors')
 const app = express()
 const jsonParser = bodyParser.json()
 
+const authMiddleware = require("./middleware.js")
+
 const version = "v0.0.1"
 
 app.use(cors());
@@ -11,6 +13,19 @@ app.use(cors());
 const server = require("./ggQuestServer.js");
 
 const port = 8080
+
+/*
+ * Authentication
+*/
+
+app.post('/api/' + version + '/auth/login', jsonParser, async (req, res) => {
+  try {
+    token = await server.login(req.body.key, req.body.password)
+    res.status(200).json({ token: token });
+  } catch (error) {
+    res.status(401).json({ error: error.message });
+  }
+})
 
 /*
  * Quests endpoints
@@ -63,7 +78,7 @@ app.get('/api/' + version + '/quests/:id', async (req, res) => {
   }
 })
 // Create a quest
-app.post('/api/' + version + '/quests', jsonParser, async (req, res) => {
+app.post('/api/' + version + '/quests', authMiddleware.verify, jsonParser, async (req, res) => {
   try {
     res.status(200).json(await server.createQuest(req.body));
   } catch (error) {
@@ -79,7 +94,7 @@ app.post('/api/' + version + '/quests', jsonParser, async (req, res) => {
   }
 })
 // Modify a quest
-app.put('/api/' + version + '/quests/:id', jsonParser, async (req, res) => {
+app.put('/api/' + version + '/quests/:id', authMiddleware.verify, jsonParser, async (req, res) => {
   try {
     if (req.query.onchainId == null || !req.query.onchainId) {
       res.status(200).json(await server.updateQuest(req.params.id, req.body));
@@ -99,7 +114,7 @@ app.put('/api/' + version + '/quests/:id', jsonParser, async (req, res) => {
   }
 })
 // Add a reward
-app.post('/api/' + version + '/quests/:questId/rewards', jsonParser, async (req, res) => {
+app.post('/api/' + version + '/quests/:questId/rewards', authMiddleware.verify, jsonParser, async (req, res) => {
   try {
     let questId;
     if (req.query.onchainId == null || !req.query.onchainId) {
@@ -122,7 +137,7 @@ app.post('/api/' + version + '/quests/:questId/rewards', jsonParser, async (req,
   }
 })
 // Remove a reward (TODO)
-app.post('/api/' + version + '/quests/:questId/rewards', async (req, res) => {
+app.post('/api/' + version + '/quests/:questId/rewards', authMiddleware.verify, async (req, res) => {
   res.status(501).json("501 Not implemented");
 })
 // Get rewards of specific quest (TODO)
@@ -135,7 +150,7 @@ app.get('/api/' + version + '/quests/:questId/rewards', async (req, res) => {
 */
 
 // Create a game
-app.post('/api/' + version + '/games/', jsonParser, async (req, res) => {
+app.post('/api/' + version + '/games/', authMiddleware.verify, jsonParser, async (req, res) => {
   try {
     res.status(200).json(await server.createGame(req.body));
   } catch (error) {
@@ -167,7 +182,7 @@ app.get('/api/' + version + '/games/:id', async (req, res) => {
   }
 })
 // Modify a game
-app.put('/api/' + version + '/games/:id', jsonParser, async (req, res) => {
+app.put('/api/' + version + '/games/:id', authMiddleware.verify, jsonParser, async (req, res) => {
   try {
     res.status(200).json(await server.updateGame(req.params.id, game));
   } catch (error) {
@@ -180,7 +195,7 @@ app.put('/api/' + version + '/games/:id', jsonParser, async (req, res) => {
 */
 
 // TODO : VERIFY IF USER METS ALL REQUIREMENTS TO GET REWARD
-app.post('/api/' + version + '/quests/:questId/verify', async (req, res) => {
+app.post('/api/' + version + '/quests/:questId/verify', authMiddleware.verify, async (req, res) => {
   res.status(200).json(await server.verifyReward(req.params.questId, req.body));
 })
 

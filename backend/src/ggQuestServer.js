@@ -1,16 +1,21 @@
 const hre = require("hardhat");
 const db = require("./models");
-const Web3 = require('web3');
+const fs = require('fs');
+const { json } = require("body-parser");
 
-//Web3 init
-const walletPrivateKey = process.env.walletPrivateKey;
-const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
-const myAcc = web3.eth.accounts.wallet.add(walletPrivateKey);
+// JWT stuff
+const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
+const authMiddleware = require("./middleware.js")
+const tokenSecret = authMiddleware.tokenSecret
 
+// Controllers imports
+const apiCredentialsController = require("./controller/apiCredentials.controller.js");
 const questsController = require("./controller/quest.controller.js");
 const gamesController = require("./controller/game.controller.js");
 const stateConditionController = require("./controller/stateCondition.controller.js");
 
+// Sync mysql DB
 db.sequelize.sync()
   .then(() => {
     console.log("Synced db.");
@@ -19,21 +24,12 @@ db.sequelize.sync()
     console.log("Failed to sync db: " + err.message);
   });
 
-const fs = require('fs');
 
+// Get contracts addresses from addresses json file
 let rawdata = fs.readFileSync("./addresses.json");
 var addresses = JSON.parse(rawdata);
-/*
-var ggProfilesContract = await hre.ethers.getContractFactory("ggProfiles");
-var ggProfiles = ggProfilesContract.attach(addresses.ggProfiles);
 
-var ggQuestsContract = await hre.ethers.getContractFactory("ggQuests");
-var ggQuests = ggQuestsContract.attach(addresses.ggQuests);
-
-var ggQuestContract = await hre.ethers.getContractFactory("ggQuest");
-*/
-
-// extract params from func
+// Function to parse parameters names from a string like 'testFunction(arg1,arg2)' => ['arg1', 'arg2']
 var ARGUMENT_NAMES = /([^\s,]+)/g;
 function getParamNames(fnStr) {
   var result = fnStr.slice(fnStr.indexOf('(')+1, fnStr.indexOf(')')).match(ARGUMENT_NAMES);
@@ -42,7 +38,26 @@ function getParamNames(fnStr) {
   return result;
 }
 
+// Function to generate JWT token for API auth
+function generateToken(credentials) {
+  return jwt.sign({data: credentials}, tokenSecret, {expiresIn: '24h'})
+}
+
 module.exports = {
+  /*
+   * API auth (JWT)
+  */
+  login: async function(key, password) {
+    let credentials = await apiCredentialsController.find(key);
+    if(credentials.password == undefined) throw Error('Invalid key or password');
+    const validPassword = await bcrypt.compare(password, credentials.password);
+    if (!validPassword) throw Error('Invalid key or password')
+    else return generateToken(credentials)
+  },
+
+  /*
+   * QuestID functions
+  */
   getProfile: async function(address) {
     var ggProfilesContract = await hre.ethers.getContractFactory("ggProfiles");
     var ggProfiles = ggProfilesContract.attach(addresses.ggProfiles);
@@ -86,6 +101,9 @@ module.exports = {
     return results;
   },
 
+  /*
+   * Games functions
+  */
   createGame: async function(game) {
     const ggQuestsContract = await hre.ethers.getContractFactory("ggQuests");
     const ggQuests = ggQuestsContract.attach(addresses.ggQuests);
@@ -105,6 +123,9 @@ module.exports = {
     return gamesController.findAll();
   },
 
+  /*
+   * Quests functions
+  */
   createQuest: async function(quest) {
     // Create quest on chain
     const ggQuestsContract = await hre.ethers.getContractFactory("ggQuests");
@@ -229,6 +250,9 @@ module.exports = {
     return questMetadata;
   },
 
+  /*
+   * Quests rewards and validation functions
+  */
   addReward: async function(questOnchainId, reward) {
     let questById = await questsController.findByOnchainId(questOnchainId);
     let address = questById.address;
@@ -256,7 +280,6 @@ module.exports = {
     ]
     await quest.addReward(reward);
   },
-
   verifyReward: async function(questId, userParams) {
     // Fetch all requirements that must be met for quest id
     // Check for each of them if userAddress pass the requirement
