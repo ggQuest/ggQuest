@@ -84,11 +84,11 @@ app.post('/api/' + version + '/quests', authMiddleware.verify, jsonParser, async
   } catch (error) {
     switch (error.code) {
       case "UNPREDICTABLE_GAS_LIMIT":
-        res.status(500).json({ error: { "reason": "Transaction reverted" } })
-        break;
+        res.status(500).json({ error: "Transaction reverted." })
     
       default:
-        res.status(500).json({ error: error })
+        console.log(error)
+        res.status(500).json({ error: "An error occured. Check parameters." })
         break;
     }
   }

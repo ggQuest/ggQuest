@@ -12,13 +12,10 @@ exports.createGame = (game) => {
       imageURL: game.imageURL,
       coverImageURL: game.coverImageURL
     })
-      .then((comment) => {
-        console.log(">> Created game: " + JSON.stringify(comment, null, 4));
+      .then((game) => {
+        console.log("[INFO] Created game");
         return game;
       })
-      .catch((err) => {
-        console.log(">> Error while creating game: ", err);
-      });
   };
 
   exports.updateGame = (gameId, game) => {

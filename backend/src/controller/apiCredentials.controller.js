@@ -12,11 +12,8 @@ exports.createCredentials = (key, password) => {
         active: 1
       })
       .then((creds) => {
-        console.log(">> Created credentials: " + JSON.stringify(creds, null, 4));
+        console.log("[INFO] Credentials created.");
       })
-      .catch((err) => {
-        console.log(">> Error while creating credentials: ", err);
-      });
     }
   })
 };

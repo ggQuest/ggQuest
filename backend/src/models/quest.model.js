@@ -7,11 +7,11 @@ module.exports = (sequelize, Sequelize) => {
         },
         onchainId: {
             type: Sequelize.INTEGER,
-            allowNull: false
+            allowNull: true
         },
         address: {
             type: Sequelize.STRING,
-            allowNull: false
+            allowNull: true
         },
         title: {
             type: Sequelize.STRING,

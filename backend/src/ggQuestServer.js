@@ -127,37 +127,53 @@ module.exports = {
    * Quests functions
   */
   createQuest: async function(quest) {
-    // Create quest on chain
-    const ggQuestsContract = await hre.ethers.getContractFactory("ggQuests");
-    const ggQuests = ggQuestsContract.attach(addresses.ggQuests);
-    let questCreateTx = await ggQuests.createQuest(quest.reputationReward, quest.gameId);
-    await hre.ethers.provider.waitForTransaction(questCreateTx.hash);
-
-    let questOnchainId = (await ggQuests.getQuests()).length-1;
-
-    // Get the created quest contract address onchain
-    let questAddress = await ggQuests.getQuestAddress(questOnchainId);
-
     // Create quest offchain
     let parsedQuest = {
-      address: questAddress,
-      onchainId: questOnchainId,
+      address: null,
+      onchainId: null,
       title: quest.title,
       description: quest.description,
       thumbnailImageURL: quest.thumbnailImageURL,
       imageURL: quest.imageURL,
       gameId: quest.gameId
     }
-    let createdQuest = await questsController.createQuest(parsedQuest);
+    await questsController.createQuest(parsedQuest)
+      .then(async (createdQuest) => {
+        // Create the state conditions
+        quest.stateConditions.forEach(stateCondition => {
+          stateCondition.questId = createdQuest.id;
+          stateConditionController.createStateCondition(stateCondition);
+        });
 
-    // Create the state conditions
-    quest.stateConditions.forEach(stateCondition => {
-      stateCondition.questId = createdQuest.id;
-      stateConditionController.createStateCondition(stateCondition);
-    });
+        // Create quest on chain
+        console.log("[INFO] Sending createQuest transaction...")
+        const ggQuestsContract = await hre.ethers.getContractFactory("ggQuests");
+        const ggQuests = ggQuestsContract.attach(addresses.ggQuests);
+        try {
+          let questCreateTx = await ggQuests.createQuest(quest.reputationReward, quest.gameId);
+          await hre.ethers.provider.waitForTransaction(questCreateTx.hash);
+        } catch (error) {
+          // If transaction fails, delete created offchain quest and throw error
+          console.log(error)
+          questsController.delete(createdQuest.id)
+          throw Error("Transaction reverted. Check parameters.")
+        }
+        console.log("[INFO] CreateQuest transaction completed")
 
-    // Add the stateConditions and address to the response
-    return questsController.find(createdQuest.id);
+        // Update quest address with onchain data (quest address and quest onchain ID)
+        let questOnchainId = (await ggQuests.getQuests()).length-1;
+        let questAddress = await ggQuests.getQuestAddress(questOnchainId);
+        questsController.updateQuest(createdQuest.id, 
+        { 
+          address: questAddress,
+          onchainId: questOnchainId
+        });
+
+        // Add the stateConditions and address to the response
+        return questsController.find(createdQuest.id);
+      })
+
+    
   },
 
   updateQuest: async function(questId, quest) {

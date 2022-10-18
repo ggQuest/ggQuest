@@ -13,12 +13,9 @@ exports.createQuest = (quest) => {
         gameId: quest.gameId
     })
       .then((quest) => {
-        console.log(">> Created quest: " + JSON.stringify(quest, null, 4));
+        console.log("[INFO] Created quest");
         return quest;
       })
-      .catch((err) => {
-        console.log(">> Error while creating quest: ", err);
-      });
 };
 
 exports.updateQuest = (questId, quest) => {
@@ -28,10 +25,6 @@ exports.updateQuest = (questId, quest) => {
     .then(num => {
       return num == 1; // true if successful false is unseccessful
     })
-    .catch(err => {
-      console.log("Error updating Quest with id=" + id);
-      return false;
-    });
 };
 
 exports.updateQuestByOnchainId = (onChainQuestId, quest) => {
@@ -41,10 +34,6 @@ exports.updateQuestByOnchainId = (onChainQuestId, quest) => {
     .then(num => {
       return num == 1; // true if successful false is unseccessful
     })
-    .catch(err => {
-      console.log("Error updating Quest with id=" + id);
-      return false;
-    });
 };
 
 exports.findAll = () => {
@@ -67,4 +56,15 @@ exports.findByOnchainId = (onChainQuestId) => {
     where: { onchainId: onChainQuestId },
     include: ["game", "stateConditions"]
   });
+};
+
+exports.delete = (questId) => {
+  Quest.destroy({
+    where: { id: questId }
+  })
+    .then(num => {
+      if (num == 1) {
+        console.log("[INFO] Deleted quest");
+      }
+    })
 };
