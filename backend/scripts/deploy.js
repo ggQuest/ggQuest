@@ -5,53 +5,47 @@ async function main() {
 
     console.log("Deploying contracts with the account:", deployer.address);
 
-    /**** Deploy each game demo contracts ****/
+    /**** Deploy main contracts ****/
 
-    // Babylon Arena (Items NFT)
-    const BabylonArenaItems = await hre.ethers.getContractFactory("BabylonArenaItems");
-    const babylonArenaItems = await BabylonArenaItems.deploy();
-    await babylonArenaItems.deployed();
-    console.log("Babylon Arena Items contract deployed to:", babylonArenaItems.address);
+    // ggProfiles
+    const ggProfilesContract = await hre.ethers.getContractFactory("ggProfiles");
+    this.ggProfiles = await ggProfilesContract.deploy("ggProfiles", "GGP");
+    await this.ggProfiles.deployTransaction.wait(5);
+    console.log("ggProfiles contract deployed to:", ggProfiles.address);
 
-    // Fruits Shooter (Scores contract)
-    const FruitsShooterScores = await hre.ethers.getContractFactory("FruitsShooterScores");
-    const fruitsShooterScores = await FruitsShooterScores.deploy();
-    await fruitsShooterScores.deployed();
-    console.log("Fruits Shooter Scores contract deployed to:", fruitsShooterScores.address);
+    console.log("Verifying contract...");
+    try {
+      await hre.run("verify:verify", {
+        address: this.ggProfiles.address,
+        constructorArguments: [
+          "ggProfiles",
+          "GGP"
+        ],
+      });
+    } catch (error) {
+      console.log(error);
+    }
 
-    /**** Deploy each game Reputation contract ****/
+    // ggQuests
+    const ggQuestsContract = await hre.ethers.getContractFactory("ggQuests");
+    this.ggQuests = await ggQuestsContract.deploy(this.ggProfiles.address, "https://gg.quest/api/quests/", "https://gg.quest/api/games/");
+    await this.ggQuests.deployTransaction.wait(5);
+    await this.ggProfiles.addOperator(this.ggQuests.address);
+    console.log("ggQuests contract deployed to:", ggQuests.address);
 
-    // Babylon Arena
-    const BabylonArenaReputationContract = await hre.ethers.getContractFactory("ReputationSBT");
-    const babylonArenaReputationContract = await BabylonArenaReputationContract.deploy("Babylon Arena", 50);
-    await babylonArenaReputationContract.deployed();
-    console.log("Babylon Arena Reputation contract deployed to:", babylonArenaReputationContract.address);
-
-    // Fruits Shooter
-    const FruitsShooterReputationContract = await hre.ethers.getContractFactory("ReputationSBT");
-    const fruitsShooterReputationContract = await FruitsShooterReputationContract.deploy("Fruits Shooter", 30);
-    await fruitsShooterReputationContract.deployed();
-    console.log("Fruits Shooter Reputation contract deployed to:", fruitsShooterReputationContract.address);
-
-    /**** Deploy Quest contracts ****/
-
-    // Babylon Arena
-    const BabylonArenaQuest1 = await hre.ethers.getContractFactory("BabylonArenaQuest1");
-    const babylonArenaQuest1 = await BabylonArenaQuest1.deploy(
-      babylonArenaReputationContract.address, "http://13.38.8.173:8080/api/quests/1", babylonArenaItems.address);
-    await babylonArenaQuest1.deployed();
-    console.log("Babylon Arena Quest 1 contract deployed to:", babylonArenaQuest1.address);
-
-    // Fruits Shooter
-    const FruitsShooterQuest1 = await hre.ethers.getContractFactory("FruitsShooterQuest1");
-    const fruitsShooterQuest1 = await FruitsShooterQuest1.deploy(
-      fruitsShooterReputationContract.address, "http://13.38.8.173:8080/api/quests/2", fruitsShooterScores.address);
-    await fruitsShooterQuest1.deployed();
-    console.log("Fruits Shooter Quest 1 contract deployed to:", fruitsShooterQuest1.address);
-
-    // Add quests to Reputation contracts operators
-    babylonArenaReputationContract.addOperator(babylonArenaQuest1.address);
-    fruitsShooterReputationContract.addOperator(fruitsShooterQuest1.address);
+    console.log("Verifying contract...");
+    try {
+      await hre.run("verify:verify", {
+        address: this.ggQuests.address,
+        constructorArguments: [
+          this.ggProfiles.address,
+          "https://gg.quest/api/quests/",
+          "https://gg.quest/api/games/"
+        ],
+      });
+    } catch (error) {
+      console.log(error);
+    }
 }
 
 // We recommend this pattern to be able to use async/await everywhere
