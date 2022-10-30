@@ -12,6 +12,12 @@ body {
   src: local("VCR"), url(./assets/fonts/VCR_OSD_MONO.ttf) format("truetype");
 }
 
+@font-face {
+  font-family: "Soft";
+  src: local("Soft"), url(./assets/fonts/soft_pro.ttf) format("truetype");
+}
+
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;

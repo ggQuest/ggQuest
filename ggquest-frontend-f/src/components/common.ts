@@ -9,7 +9,7 @@ export const Title = styled.span<{
     normalCased?: boolean;
   }>`
     color: ${(props) => props.color || colors.primaryText};
-    font-family: VCR, sans-serif;
+    font-family: Soft, sans-serif;
     font-style: normal;
     font-weight: normal;
     ${(props) => (!props.normalCased ? `text-transform: uppercase;` : ``)}

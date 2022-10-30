@@ -1,8 +1,16 @@
-import { HeaderContainer, LinksContainer,HeaderAbsoluteContainer, renderLinkItem } from "./../Header";
+import { HeaderContainer, LinksContainer,HeaderAbsoluteContainer, renderLinkItem } from "../Header/Header";
+import styled from "styled-components";
+
+const FooterContainer = styled.div`
+display: flex;
+flex-wrap: wrap;
+text-align: center;
+justify-content: center;
+`
 
 export const Footer = () => {
     return (
-        <HeaderContainer
+        <FooterContainer
         className="d-flex align-items-center" 
         >
             {/* LINKS */}
@@ -14,6 +22,6 @@ export const Footer = () => {
                 
             </HeaderAbsoluteContainer>
 
-        </HeaderContainer>
+        </FooterContainer>
     )
 }

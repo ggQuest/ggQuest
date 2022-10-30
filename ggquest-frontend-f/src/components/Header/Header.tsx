@@ -1,37 +1,35 @@
 import styled from "styled-components";
-import colors from "../lib/colors";
-import sizes from "../lib/sizes";
-import theme from "../lib/theme";
+import colors from "../../lib/colors";
+import sizes from "../../lib/sizes";
+import theme from "../../lib/theme";
 import HeaderLogo from "./HeaderLogo";
-import { MobileMenuOpenProps, NavItemProps } from "./types";
+import { MobileMenuOpenProps, NavItemProps } from "../types";
 
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { Link } from "react-router-dom";
-import { Title } from "./common";
-
-
+import { Title } from "../common";
 
 export const HeaderContainer = styled.div`
-height: ${theme.header.height}px;
-position: sticky;
-top: 0;
-border-bottom: 1px solid ${colors.border};
+  height: ${theme.header.height}px;
+  position: sticky;
+  top: 0;
+  border-bottom: 1px solid ${colors.border};
 
-@media (max-width: ${sizes.xl}px) {
-  padding: 16px 24px;
-  border-bottom: none;
-}
+  @media (max-width: ${sizes.xl}px) {
+    padding: 16px 24px;
+    border-bottom: none;
+  }
 
-z-index: 10;
+  z-index: 10;
 
-&:before {
-  content: "";
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  left: 0;
-  background: rgba(255, 255, 255, 0.01);
-}
+  &:before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    background: rgba(255, 255, 255, 0.01);
+  }
 `;
 interface HACProps {
   isFooter?: boolean;
@@ -86,7 +84,6 @@ export const ConnectItem = styled(Title)`
     position:absolute;
     right:0;
     top:-10px;
-
     &:hover {
       opacity: 1;
     }
@@ -146,10 +143,11 @@ const Header = ()=> {
             {/* LINKS */}
             <HeaderAbsoluteContainer>
                 <LinksContainer>
-                {renderLinkItem("QUESTS", "/")}
+                {renderLinkItem("HOME", "/")}
+                {renderLinkItem("QUESTS", "/quests")}
                 {renderLinkItem("LEADERBOARD", "/leaderboard")}
                 {renderLinkItem("STATS", "/stats")}
-
+                {renderLinkItem("My Profile", "/myprofile")}
                 {/*
                     {chainId &&
                         isEthNetwork(chainId) &&

@@ -14,8 +14,9 @@ import { QuestInfo } from '../../pages/Homepage';
 
 
 const CardContainer = styled.div`
-  width: 290px;
-  height: 580px;
+display: flex;
+  width: 230px;
+  height: 450px;
   box-shadow: 0 0 12px 1px rgba(15, 15, 15, 0.12);
   position: relative;
   padding: 20px solid;
@@ -30,9 +31,8 @@ const CardWrapper = styled.div`
   width: 100%;
   height: 100%;
   overflow: hidden;
-  
-  
 `;
+
 const moving = keyframes`
 from { transform: rotate(-10deg) translateX(0px) rotate(-10deg); }
 to   { transform: rotate(300deg) translateX(10px) rotate(-250deg); }
@@ -46,6 +46,7 @@ const rotateInDown =  keyframes`
 interface AMProps {
   isSmall?: boolean;
 }
+
 const AxieMoving = styled(motion.div)<AMProps>`
   position: absolute;
   width: ${props=> props.isSmall ? "130px" : "auto"};

@@ -23,7 +23,7 @@ function App() {
 
   const ALCHEMY_ID = process.env.ALCHEMY_ID;
   const {chains, provider} = configureChains(
-    [chain.mainnet, chain.polygon,chain.optimism, chain.arbitrum],
+    [chain.mainnet, chain.polygon, chain.optimism, chain.arbitrum],
     [alchemyProvider({ apiKey: ALCHEMY_ID }),
       publicProvider()]
   )
@@ -41,7 +41,16 @@ function App() {
 
   return (
     <WagmiConfig client={wagmiClient}>
-      <RainbowKitProvider theme={darkTheme()} chains={chains} coolMode>
+      <RainbowKitProvider 
+        theme={darkTheme({
+          accentColor: '#7b3fe4',
+          accentColorForeground: 'white',
+          borderRadius: 'small',
+          fontStack: 'system',
+          overlayBlur: 'small',
+        })} 
+        chains={chains} coolMode
+      >
         <RootApp/>
       </RainbowKitProvider>
     </WagmiConfig>

@@ -1,5 +1,12 @@
 {
   "dependencies": {
-    "dotenv": "^16.0.1"
+    "@web3-react/core": "^6.1.9",
+    "bignumber.js": "^9.1.0",
+    "bootstrap": "^5.2.2",
+    "dotenv": "^16.0.1",
+    "polished": "^4.2.2",
+    "react-bootstrap": "^2.5.0",
+    "react-responsive-carousel": "^3.2.23",
+    "react-router-dom": "^6.4.2"
   }
 }
