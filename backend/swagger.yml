@@ -1,0 +1,472 @@
+openapi: 3.0.0
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: ggQuest backend server
+    url: https://gg.quest/api/v0.0.1
+info:
+  description: ggQuest API
+  version: 1.0.0
+  title: ggQuest API
+  contact:
+    email: h0tmilk@gg.quest
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+tags:
+  - name: admins
+    description: Admin calls | May become public with a DAO validation system later
+  - name: public
+    description: Operations available to all
+paths:
+  /auth/login:
+    post:
+      tags:
+        - public
+      summary: Get authentication token
+      description: Return the ath token for restricted requests
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthItem'
+        description: Authentication credentials
+      responses:
+        '200':
+          description: Authentication success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: Bearer token
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message
+
+  /quests:
+    get:
+      tags:
+        - public
+      summary: get all quests
+      description: |
+        You can get  all quests
+      
+      responses:
+        '200':
+          description: all quests
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/QuestItemRO'
+        '400':
+          description: bad input parameter
+          
+    post:
+      tags:
+        - admins
+      summary: Create a quest
+      security:
+        - bearerAuth: []
+      responses:
+        '201':
+          description: quest created
+        '400':
+          description: 'invalid input, object invalid'
+        '409':
+          description: an existing item already exists
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuestItem'
+        description: Quest to create  
+        
+  /quests/{id}:
+    get:
+      tags:
+        - public
+      summary: get quest by ID
+      description: |
+        You can get quest by ID
+      parameters:
+        - name: id
+          in: path
+          description: Quest ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      
+      responses:
+        '200':
+          description: quest
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuestItemRO'
+        '400':
+          description: bad input parameter
+  /games:
+    get:
+      tags:
+        - public
+      summary: get all games
+      description: |
+        You can get  all registered games
+      
+      responses:
+        '200':
+          description: all registered games
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GameItemRO'
+        '400':
+          description: bad input parameter
+    post:
+      tags:
+        - admins
+      summary: Adds a new game
+      security:
+        - bearerAuth: []
+      responses:
+        '201':
+          description: game created
+        '400':
+          description: 'invalid input, object invalid'
+        '409':
+          description: an existing item already exists
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GameItem'
+        description: Game to add
+        
+  /games/{id}:
+    get:
+      tags:
+        - public
+      summary: get game by ID
+      description: |
+        You can get game by ID
+      parameters:
+        - name: id
+          in: path
+          description: Game ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      
+      responses:
+        '200':
+          description: quest
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameItemRO'
+        '400':
+          description: bad input parameter      
+  
+  /quests/{id}/rewards:
+    get:
+      tags:
+        - public
+      summary: get quest rewards by ID
+      description: |
+        Can quest rewards
+      parameters:
+        - name: id
+          in: path
+          description: Quest ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      
+      responses:
+        '200':
+          description: rewards
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  oneOf:
+                    - $ref: '#/components/schemas/RewardItem'
+        '400':
+          description: bad input parameter      
+    post:
+      tags:
+        - admins
+      summary: add reward to a quest
+      description: |
+        Add a reward to a quest (after sending it to the quest address)
+      parameters:
+        - name: id
+          in: path
+          description: Quest ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      
+      responses:
+        '200':
+          description: quest
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RewardItem'
+        '400':
+          description: bad input parameter 
+  
+  /profiles:
+    get:
+      tags:
+        - public
+      summary: get all registered profiles
+      description: |
+        You can get  all registered profiles
+      
+      responses:
+        '200':
+          description: all registered profiles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProfileItem'
+        '400':
+          description: bad input parameter
+  /profiles/{playerAddress}:
+    get:
+      tags:
+        - public
+      summary: get registered profile by addreess
+      description: |
+        You can get registered profile by address
+      parameters:
+        - name: playerAddress
+          in: path
+          description: Profile address
+          required: true
+          schema:
+            type: string
+      
+      responses:
+        '200':
+          description: profile by address
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileItem'
+        '400':
+          description: bad input parameter
+components:
+  securitySchemes:
+    bearerAuth:            # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+  schemas:
+    AuthItem:
+      type: object
+      required:
+        - key
+        - password
+      properties:
+        key:
+          type: string
+        password:
+          type: string
+    GameItemRO:
+      allOf:
+        - properties:
+            id:
+              type: integer
+              example: 1
+        - $ref: '#/components/schemas/GameItem'
+    GameItem:
+      type: object
+      required:
+        - name
+        - description
+        - websiteURL
+      properties:
+        name:
+          type: string
+          example: The Best Web3 Game
+        description:
+          type: string
+          example: The best game you will find in the web3 industry !
+        websiteURL:
+          type: string
+          example: the-best-web3-game.xyz
+        thumbnailImageURL:
+          type: string
+          format: url
+          example: https://gg.quest/media/image1234-thumbnail.png
+        imageURL:
+          type: string
+          format: url
+          example: https://gg.quest/media/image1234.png
+        coverImageURL:
+          type: string
+          format: url
+          example: https://gg.quest/media/image4321.png
+    ProfileItem:
+      properties:
+        address:
+          type: string
+          example: "0x73bc9b6236b0016A6D1C5e8718C5d6B12CB9dE53"
+        pseudo:
+          type: string
+          example: h0tmilk
+        profilePictureURL:
+          type: string
+          format: url
+          example: https://gg.quest/media/img-profile1234.png
+        coverPictureURL:
+          type: string
+          format: url
+          example: https://gg.quest/media/image9876.png
+        isRegistered:
+          type: boolean
+          example: true
+        gainedReputation:
+          type: integer
+          example: 12
+        lostReputation:
+          type: integer
+          example: 0
+        linkedThirdParties:
+          type: array
+          items:
+            type: string
+          example: ["Twitch", "Twitter"]
+    QuestItemRO:
+      allOf:
+        - properties:
+            id:
+              type: integer
+              example: 1
+            address:
+              type: string
+              example: "0x3803baA21864685aE873E5b431D482F7BdafFf29"
+            isActive:
+              type: boolean
+              example: true
+            players:
+              type: array
+              items:
+                type: string
+              example: [ "0x56469f4AF31AD9d9401316a34B3b1A01cFb1b321",
+                "0x3803baA21864685aE873E5b431D482F7BdafFf29",
+                "0x50Dd138D8E6829C880BCf17BA78D701678608bE1"
+              ]
+            game:
+              $ref: '#/components/schemas/GameItemRO'
+            createdAt:
+              type: string
+              example: "2022-09-07T21:57:33.000Z"
+            updatedAt:
+              type: string
+              example: "2022-09-07T21:57:33.000Z"
+        - $ref: '#/components/schemas/QuestItem'
+    QuestItem:
+      properties:
+        title:
+          type: string
+          example: "Giga Chad score"
+        description:
+          type: string
+          example: "Make a score of 100 points in one game"
+        thumbnailImageURL:
+          type: string
+          format: url
+          example: https://gg.quest/media/image5678.png
+        imageURL:
+          type: string
+          format: url
+          example: https://gg.quest/media/image3478.png
+        reputationReward:
+          type: integer
+          example: 50
+        rewards:
+          type: array
+          items:
+            $ref: '#/components/schemas/RewardItem'
+        stateConditions:
+          type: array
+          items:
+            $ref: '#/components/schemas/StateConditionItem'
+        gameId:
+          type: integer
+          example: 1
+    RewardItem:
+      required:
+        - rewardType
+        - rewardContract
+        - tokenAmount
+        - amount
+      properties:
+        rewardType:
+          type: string
+          enum:
+          - ERC20
+          - ERC721
+          - ERC1155
+          example: ERC721
+        rewardContract:
+          type: string
+          example: "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D"
+        tokenAmount:
+          type: integer
+          example: 1
+        amount:
+          type: integer
+          example: 5
+        id:
+          type: integer
+    StateConditionItem:
+      properties:
+        contract:
+          type: string
+          example: "0x40FD4F0b0478c68b3b6795c392Bf89d1676978C2"
+        function:
+          type: string
+          description: "The prototype of the function to call"
+          example: "getBestScore(address)"
+        parameters:
+          type: array
+          items:
+            type: string
+          description: "Parameters of the function call"
+          example: [ "$playerAddress$" ]
+        compareWith:
+          type: string
+          example: "100"
+        operator:
+          type: string
+          example: gte
+          enum:
+          - eq
+          - gt
+          - gte
+          - lt
+          - lte

@@ -28,7 +28,7 @@ app.post('/api/' + version + '/auth/login', jsonParser, async (req, res) => {
 })
 
 /*
- * Quests endpoints
+ * Profiles endpoints
 */
 
 // Get all profiles
@@ -137,7 +137,7 @@ app.post('/api/' + version + '/quests/:questId/rewards', authMiddleware.verify, 
   }
 })
 // Remove a reward (TODO)
-app.post('/api/' + version + '/quests/:questId/rewards', authMiddleware.verify, async (req, res) => {
+app.delete('/api/' + version + '/quests/:questId/rewards', authMiddleware.verify, async (req, res) => {
   res.status(501).json("501 Not implemented");
 })
 // Get rewards of specific quest (TODO)
@@ -194,7 +194,7 @@ app.put('/api/' + version + '/games/:id', authMiddleware.verify, jsonParser, asy
  * Server
 */
 
-// TODO : VERIFY IF USER METS ALL REQUIREMENTS TO GET REWARD
+// TODO : VERIFY IF USER MEETS ALL REQUIREMENTS TO GET REWARD
 app.post('/api/' + version + '/quests/:questId/verify', authMiddleware.verify, async (req, res) => {
   res.status(200).json(await server.verifyReward(req.params.questId, req.body));
 })
