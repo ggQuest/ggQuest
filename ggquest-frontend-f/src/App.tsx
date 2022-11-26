@@ -23,13 +23,13 @@ function App() {
 
   const ALCHEMY_ID = process.env.ALCHEMY_ID;
   const {chains, provider} = configureChains(
-    [chain.mainnet, chain.polygon,chain.optimism, chain.arbitrum],
+    [chain.mainnet, chain.polygon,chain.optimism, chain.arbitrum, chain.polygonMumbai ],
     [alchemyProvider({ apiKey: ALCHEMY_ID }),
       publicProvider()]
   )
 
   const { connectors } = getDefaultWallets({
-    appName: 'My RainbowKit App',
+    appName: 'ggQuest',
     chains
   });
   
