@@ -8,6 +8,10 @@ db.sequelize.sync()
     console.log("Failed to sync db: " + err.message);
   });
 
+
+// db.sequelize.sync().then((e)=>{console.log(e) }).catch((e )=>{ console.log(e) });
+db.sequelize.sync()
+
 const apiCredentialsController = require("./controller/apiCredentials.controller.js");
 
 function generateKey() {
