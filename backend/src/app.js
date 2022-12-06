@@ -14,6 +14,19 @@ const server = require("./ggQuestServer.js");
 
 const port = 8080
 
+
+/*
+ * Status Api Check
+*/
+
+app.get('/api/' + version + '/status', async (req, res) => {
+  try {
+    res.status(200).json({ status: "ggQuest OK" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+})
+
 /*
  * Authentication
 */
