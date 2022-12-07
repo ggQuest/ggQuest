@@ -197,11 +197,25 @@ app.get('/api/' + version + '/games/:id', async (req, res) => {
 // Modify a game
 app.put('/api/' + version + '/games/:id', authMiddleware.verify, jsonParser, async (req, res) => {
   try {
-    res.status(200).json(await server.updateGame(req.params.id, game));
+  res.status(200).json(await server.updateGame(req.params.id, game));
   } catch (error) {
-    res.status(404).json({ error: error })
+  // Trata erros
+  console.error(error);
+  if (error.response) {
+  // The request was made and the server responded with a status code
+  // that falls out of the range of 2xx
+  res.status(error.response.status).json({ error: error.response.data });
+  } else if (error.request) {
+  // The request was made but no response was received
+  // error.request is an instance of XMLHttpRequest in the browser and an instance of
+  // http.ClientRequest in node.js
+  res.status(404).json({ error: error.request });
+  } else {
+  // Something happened in setting up the request that triggered an Error
+  res.status(500).json({ error: error.message });
   }
-})
+  }
+  })
 
 /*
  * Server
