@@ -22,11 +22,11 @@ module.exports = (sequelize, Sequelize) => {
             defaultValue: false,
         },
         gainedReputation: {
-            type: Sequelize.UINT,
+            type: Sequelize.INTEGER,
             defaultValue: 0,
         },
         lostReputation: {
-            type: Sequelize.UINT,
+            type: Sequelize.INTEGER,
             defaultValue: 0,
         },
     }, {
