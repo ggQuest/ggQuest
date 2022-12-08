@@ -12,6 +12,7 @@ const tokenSecret = authMiddleware.tokenSecret
 // Controllers imports
 const apiCredentialsController = require("./controller/apiCredentials.controller.js");
 const questsController = require("./controller/quest.controller.js");
+const playersController = require("./controller/player.controller.js");
 const gamesController = require("./controller/game.controller.js");
 const stateConditionController = require("./controller/stateCondition.controller.js");
 
@@ -24,7 +25,6 @@ db.sequelize.sync()
     console.log("Failed to sync db: " + err.message);
   });
 
-
 // Get contracts addresses from addresses json file
 let rawdata = fs.readFileSync("./addresses.json");
 var addresses = JSON.parse(rawdata);
@@ -32,24 +32,45 @@ var addresses = JSON.parse(rawdata);
 // Function to parse parameters names from a string like 'testFunction(arg1,arg2)' => ['arg1', 'arg2']
 var ARGUMENT_NAMES = /([^\s,]+)/g;
 function getParamNames(fnStr) {
-  var result = fnStr.slice(fnStr.indexOf('(')+1, fnStr.indexOf(')')).match(ARGUMENT_NAMES);
-  if(result === null)
-     result = [];
+  var result = fnStr.slice(fnStr.indexOf('(') + 1, fnStr.indexOf(')')).match(ARGUMENT_NAMES);
+  if (result === null)
+    result = [];
   return result;
 }
 
 // Function to generate JWT token for API auth
 function generateToken(credentials) {
-  return jwt.sign({data: credentials}, tokenSecret, {expiresIn: '24h'})
+  return jwt.sign({ data: credentials }, tokenSecret, { expiresIn: '24h' })
+}
+
+
+// Helper functions
+
+async function createPlayerOffChain(username, profileData, thirdPartyData) {
+  return await server .createPlayer({
+    username: username,
+    profilePictureURL: profileData.profilePictureURL,
+    coverPictureURL: profileData.coverPictureURL,
+  }, thirdPartyData);
+}
+
+async function getPlayerAddressOnChain(username) {
+  const ggProfilesContract = await hre.ethers.getContractFactory("ggProfiles");
+  const ggProfiles = ggProfilesContract.attach(addresses.ggProfiles);
+  return await ggProfiles.getPlayerAddress(username);
+}
+
+function updatePlayerOffChain(playerId, data) {
+  playersController.updatePlayer(playerId, data);
 }
 
 module.exports = {
   /*
    * API auth (JWT)
   */
-  login: async function(key, password) {
+  login: async function (key, password) {
     let credentials = await apiCredentialsController.find(key);
-    if(credentials.password == undefined) throw Error('Invalid key or password');
+    if (credentials.password == undefined) throw Error('Invalid key or password');
     const validPassword = await bcrypt.compare(password, credentials.password);
     if (!validPassword) throw Error('Invalid key or password')
     else return generateToken(credentials)
@@ -58,7 +79,7 @@ module.exports = {
   /*
    * QuestID functions
   */
-  getProfile: async function(address) {
+  getProfile: async function (address) {
     var ggProfilesContract = await hre.ethers.getContractFactory("ggProfiles");
     var ggProfiles = ggProfilesContract.attach(addresses.ggProfiles);
 
@@ -75,7 +96,7 @@ module.exports = {
     }
     return profile;
   },
-  getProfiles: async function() {
+  getProfiles: async function () {
     var ggProfilesContract = await hre.ethers.getContractFactory("ggProfiles");
     var ggProfiles = ggProfilesContract.attach(addresses.ggProfiles);
 
@@ -104,7 +125,7 @@ module.exports = {
   /*
    * Games functions
   */
-  createGame: async function(game) {
+  createGame: async function (game) {
     const ggQuestsContract = await hre.ethers.getContractFactory("ggQuests");
     const ggQuests = ggQuestsContract.attach(addresses.ggQuests);
     let addGameTx = await ggQuests.addGame(game.name);
@@ -113,20 +134,20 @@ module.exports = {
     game.id = games.findIndex(gameName => gameName === game.name);
     return gamesController.createGame(game);
   },
-  updateGame: async function(gameId, game) {
+  updateGame: async function (gameId, game) {
     return gamesController.updateGame(gameId, game);
   },
-  getGame: async function(gameId) {
+  getGame: async function (gameId) {
     return gamesController.find(gameId);
   },
-  getGames: async function() {
+  getGames: async function () {
     return gamesController.findAll();
   },
 
   /*
    * Quests functions
   */
-  createQuest: async function(quest) {
+  createQuest: async function (quest) {
     // Create quest offchain
     let parsedQuest = {
       address: null,
@@ -161,25 +182,113 @@ module.exports = {
         console.log("[INFO] CreateQuest transaction completed")
 
         // Update quest address with onchain data (quest address and quest onchain ID)
-        let questOnchainId = (await ggQuests.getQuests()).length-1;
+        let questOnchainId = (await ggQuests.getQuests()).length - 1;
         let questAddress = await ggQuests.getQuestAddress(questOnchainId);
-        questsController.updateQuest(createdQuest.id, 
-        { 
-          address: questAddress,
-          onchainId: questOnchainId
-        });
+        questsController.updateQuest(createdQuest.id,
+          {
+            address: questAddress,
+            onchainId: questOnchainId
+          });
 
         // Add the stateConditions and address to the response
         return questsController.find(createdQuest.id);
       })
 
-    
   },
 
-  updateQuest: async function(questId, quest) {
+  /*
+   * Player Functions version 0.0.2
+   */
+
+  updatePlayer: async function (playerId, username, profileData, thirdPartyData) {
+    // Update player offchain
+    try {
+      let updatedPlayer = await playersController.updatePlayer(playerId, {
+        username: username,
+        profilePictureURL: profileData.profilePictureURL,
+        coverPictureURL: profileData.coverPictureURL,
+      }, thirdPartyData);
+
+      // Update player on chain
+      console.log("[INFO] Sending updatePlayer transaction...");
+      const ggProfilesContract = await hre.ethers.getContractFactory("ggProfiles");
+      const ggProfiles = ggProfilesContract.attach(addresses.ggProfiles);
+      let updatableByUserData = {
+        pseudo: profileData.pseudo,
+        profilePictureURL: profileData.profilePictureURL,
+        coverPictureURL: profileData.coverPictureURL,
+      };
+      await ggProfiles.update(updatableByUserData);
+      console.log("[INFO] UpdatePlayer transaction completed");
+
+      // Add the address to the response
+      return playersController.findPlayer(updatedPlayer.id);
+    } catch (error) {
+      // If an error occurs, throw it
+      throw error;
+    }
+
+  },
+
+
+  createPlayer: async function (username, profileData, thirdPartyData) {
+    try {
+      // Create player off-chain
+      let createdPlayer = await createPlayerOffChain(username, profileData, thirdPartyData);
+  
+      // Check if player already exists on-chain
+      let playerAddress = await getPlayerAddressOnChain(username);
+      if (playerAddress) {
+        // If player already exists, update player off-chain data and return player
+        updatePlayerOffChain(createdPlayer.id, {
+          address: playerAddress,
+          pseudo: profileData.pseudo,
+          profilePictureURL: profileData.profilePictureURL,
+          coverPictureURL: profileData.coverPictureURL,
+        });
+        return playersController.findPlayer(createdPlayer.id);
+      }
+  
+      // Create player on-chain
+      try {
+        let playerCreateTx = await ggProfiles.createPlayer(username);
+        await hre.ethers.provider.waitForTransaction(playerCreateTx.hash);
+      } catch (error) {
+        // If transaction fails, delete created off-chain player and throw error
+        console.log(error);
+        playersController.deletePlayer(createdPlayer.id);
+        throw Error("Transaction reverted. Check parameters.");
+      }
+      console.log("[INFO] CreatePlayer transaction completed");
+  
+      // Update player with on-chain address and user data
+      playerAddress = await ggProfiles.getPlayerAddress(username);
+      let updatableByUserData = {
+        pseudo: profileData.pseudo,
+        profilePictureURL: profileData.profilePictureURL,
+        coverPictureURL: profileData.coverPictureURL,
+      };
+      await ggProfiles.mint(updatableByUserData);
+      playersController.updatePlayer(createdPlayer.id, {
+        address: playerAddress,
+        pseudo: profileData.pseudo,
+        profilePictureURL: profileData.profilePictureURL,
+        coverPictureURL: profileData.coverPictureURL,
+      });
+  
+      // Add the address to the response
+      return playersController.findPlayer(createdPlayer.id);
+    } catch (error) {
+      // If an error occurs, throw it
+      throw error;
+    }
+  },
+  
+  
+  updateQuest: async function (questId, quest) {
     let dbQuest = questsController.find(questId)
-    if(quest.gameId != null && quest.gameId != dbQuest.gameId) {
-      throw 'Game ID cannot be changed.' 
+    if (quest.gameId != null && quest.gameId != dbQuest.gameId) {
+      throw 'Game ID cannot be changed.'
     }
     quest.stateConditions.forEach(stateCondition => {
       stateConditionController.updateStateCondition(stateCondition.id, stateCondition);
@@ -188,10 +297,10 @@ module.exports = {
     return updatedQuest;
   },
 
-  updateQuestByOnchainId: async function(questId, quest) {
+  updateQuestByOnchainId: async function (questId, quest) {
     let dbQuest = await questsController.findByOnchainId(questId)
-    if(quest.gameId != null && quest.gameId != dbQuest.gameId) {
-      throw 'Game ID cannot be changed.' 
+    if (quest.gameId != null && quest.gameId != dbQuest.gameId) {
+      throw 'Game ID cannot be changed.'
     }
     quest.stateConditions.forEach(stateCondition => {
       stateConditionController.updateStateCondition(stateCondition.id, stateCondition);
@@ -200,11 +309,11 @@ module.exports = {
     return updatedQuest;
   },
 
-  getQuests: async function() {
+  getQuests: async function () {
     return questsController.findAll();
   },
 
-  getQuest: async function(questId) {
+  getQuest: async function (questId) {
     let questMetadata = await questsController.find(questId);
 
     const questContract = await hre.ethers.getContractFactory("ggQuest");
@@ -223,7 +332,7 @@ module.exports = {
           break;
         case 2:
           questMetadata.rewardType = "ERC1155";
-        break;
+          break;
       }
       questMetadata.rewardContract = rawReward[1];
       questMetadata.tokenAmount = rawReward[2];
@@ -234,7 +343,7 @@ module.exports = {
     return questMetadata;
   },
 
-  getQuestByOnchainId: async function(questId) {
+  getQuestByOnchainId: async function (questId) {
     let questMetadata = await questsController.findByOnchainId(questId);
 
     const questContract = await hre.ethers.getContractFactory("ggQuest");
@@ -254,14 +363,14 @@ module.exports = {
           break;
         case 2:
           questMetadata.rewardType = "ERC1155";
-        break;
+          break;
       }
       questMetadata.rewardContract = rawReward[1];
       questMetadata.tokenAmount = rawReward[2];
       questMetadata.amount = rawReward[3];
       questMetadata.tokenId = rawReward[4];
     });
-    
+
 
     return questMetadata;
   },
@@ -269,12 +378,12 @@ module.exports = {
   /*
    * Quests rewards and validation functions
   */
-  addReward: async function(questOnchainId, reward) {
+  addReward: async function (questOnchainId, reward) {
     let questById = await questsController.findByOnchainId(questOnchainId);
     let address = questById.address;
     const questContract = await hre.ethers.getContractFactory("ggQuest");
     const quest = questContract.attach(address);
-    
+
     let rewardType;
     switch (reward.rewardType) {
       case "ERC20":
@@ -285,7 +394,7 @@ module.exports = {
         break;
       case "ERC1155":
         rewardType = 2;
-      break;
+        break;
     }
     let rawReward = [
       rewardType,
@@ -296,7 +405,7 @@ module.exports = {
     ]
     await quest.addReward(reward);
   },
-  verifyReward: async function(questId, userParams) {
+  verifyReward: async function (questId, userParams) {
     // Fetch all requirements that must be met for quest id
     // Check for each of them if userAddress pass the requirement
     // get all conditions stored off chain
@@ -310,21 +419,21 @@ module.exports = {
       const params = condition.parameters;
       const valueToBeCompared = condition.compareWith;
       const operand = condition.operator;
-      
+
       // replace $arg$ by arg provided in body of api call
       const finalParams = [];
-      params.forEach((param)=> {
+      params.forEach((param) => {
         if (param.substring(0, 1) === '$') {
           // remove last and first chars
-          const prop = param.substring(1,param.length-1);
+          const prop = param.substring(1, param.length - 1);
           // we pull the right param from user params input
           const value = userParams[prop];
           finalParams.push(value);
-        }else{
+        } else {
           finalParams.push(param);
         }
       })
-      
+
       // ISSUE : it returns a receipt not the value
       // workaround : add events for getters/view functions inside sol contracts
 
@@ -342,32 +451,32 @@ module.exports = {
 
       switch (operand) {
         case gt:
-          if(!(result > valueToBeCompared))
+          if (!(result > valueToBeCompared))
             return false;
           break;
 
         case gte:
-          if(!(result >= valueToBeCompared))
+          if (!(result >= valueToBeCompared))
             return false;
           break;
 
         case lte:
-          if(!(result <= valueToBeCompared))
+          if (!(result <= valueToBeCompared))
             return false;
           break;
 
         case lt:
-          if(!(result < valueToBeCompared))
+          if (!(result < valueToBeCompared))
             return false;
           break;
 
         case neq:
-          if(!(result !== valueToBeCompared))
+          if (!(result !== valueToBeCompared))
             return false;
           break;
 
         case eq:
-          if(!(result === valueToBeCompared))
+          if (!(result === valueToBeCompared))
             return false;
           break;
 
