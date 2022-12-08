@@ -59,8 +59,10 @@ if (!db.games) {
   db.sequelize = sequelize;
   db.games = require("./game.model.js")(sequelize, Sequelize);
   db.quests = require("./quest.model.js")(sequelize, Sequelize);
+  db.players = require("./player.model.js")(sequelize, Sequelize);
   db.apiCredentials = require("./apiCredentials.model.js")(sequelize, Sequelize);
   db.stateConditions = require("./stateCondition.model.js")(sequelize, Sequelize);
+  db.thirdParty = require("./thirdparty.model.js")(sequelize, Sequelize);
   db.games.hasMany(db.quests, { 
     as: "quests",
     onDelete: 'CASCADE'
@@ -76,6 +78,14 @@ if (!db.games) {
   db.stateConditions.belongsTo(db.quests, {
     foreignKey: "questId",
     as: "quest",
+  });
+  db.players.hasMany(db.quests, { 
+    as: "players",
+    onDelete: 'CASCADE'
+  });
+  db.thirdParty.belongsTo(db.quests, {
+    foreignKey: "playerId",
+    as: "players",
   });
 }
 
