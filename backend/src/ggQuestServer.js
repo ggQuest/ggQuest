@@ -47,7 +47,7 @@ function generateToken(credentials) {
 // Helper functions
 
 async function createPlayerOffChain(username, profileData, thirdPartyData) {
-  return await playersController.createPlayer({
+  return await server .createPlayer({
     username: username,
     profilePictureURL: profileData.profilePictureURL,
     coverPictureURL: profileData.coverPictureURL,
@@ -295,7 +295,7 @@ module.exports = {
     });
     let updatedQuest = questsController.updateQuest(questId, quest);
     return updatedQuest;
-  }
+  },
 
   updateQuestByOnchainId: async function (questId, quest) {
     let dbQuest = await questsController.findByOnchainId(questId)
