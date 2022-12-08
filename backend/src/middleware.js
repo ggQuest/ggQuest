@@ -2,12 +2,11 @@ const jwt = require('jsonwebtoken')
 const dotenv = require("dotenv")
 dotenv.config(); 
 
-console.log(process.env.TOKEN_SECRET)
 
 if (!process.env.TOKEN_SECRET) {
   return res.status(500).json({ error: "Token secret not defined" });
 }
-const tokenSecret = process.env.TOKEN_SECRET;
+const tokenSecret = process.env.TOKEN_SECRET || "afp:pcvq3rZ=swvwhdwh!pcigyj";
 
 
 exports.verify = (req, res, next) => {
