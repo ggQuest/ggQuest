@@ -57,7 +57,7 @@ app.get('/api/' + version + '/profiles/:address', async (req, res) => {
       case "INVALID_ARGUMENT":
         res.status(400).json({ error: error })
         break;
-    
+
       default:
         res.status(500).json({ error: error })
         break;
@@ -76,7 +76,7 @@ app.get('/api/' + version + '/quests', async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error })
   }
-  
+
 })
 // Get a specific quest
 app.get('/api/' + version + '/quests/:id', async (req, res) => {
@@ -98,7 +98,7 @@ app.post('/api/' + version + '/quests', authMiddleware.verify, jsonParser, async
     switch (error.code) {
       case "UNPREDICTABLE_GAS_LIMIT":
         res.status(500).json({ error: "Transaction reverted." })
-    
+
       default:
         console.log(error)
         res.status(500).json({ error: "An error occured. Check parameters." })
@@ -119,7 +119,7 @@ app.put('/api/' + version + '/quests/:id', authMiddleware.verify, jsonParser, as
       case "UNPREDICTABLE_GAS_LIMIT":
         res.status(500).json({ error: { "reason": "Transaction reverted" } })
         break;
-    
+
       default:
         res.status(500).json({ error: error })
         break;
@@ -142,7 +142,7 @@ app.post('/api/' + version + '/quests/:questId/rewards', authMiddleware.verify, 
       case "UNPREDICTABLE_GAS_LIMIT":
         res.status(500).json({ error: { "reason": "Transaction reverted" } })
         break;
-    
+
       default:
         res.status(500).json({ error: error })
         break;
@@ -171,7 +171,7 @@ app.post('/api/' + version + '/games/', authMiddleware.verify, jsonParser, async
       case "UNPREDICTABLE_GAS_LIMIT":
         res.status(500).json({ error: { "reason": "Transaction reverted" } })
         break;
-    
+
       default:
         res.status(500).json({ error: error })
         break;
@@ -197,25 +197,86 @@ app.get('/api/' + version + '/games/:id', async (req, res) => {
 // Modify a game
 app.put('/api/' + version + '/games/:id', authMiddleware.verify, jsonParser, async (req, res) => {
   try {
-  res.status(200).json(await server.updateGame(req.params.id, game));
+    res.status(200).json(await server.updateGame(req.params.id, game));
   } catch (error) {
-  // Trata erros
-  console.error(error);
-  if (error.response) {
-  // The request was made and the server responded with a status code
-  // that falls out of the range of 2xx
-  res.status(error.response.status).json({ error: error.response.data });
-  } else if (error.request) {
-  // The request was made but no response was received
-  // error.request is an instance of XMLHttpRequest in the browser and an instance of
-  // http.ClientRequest in node.js
-  res.status(404).json({ error: error.request });
-  } else {
-  // Something happened in setting up the request that triggered an Error
-  res.status(500).json({ error: error.message });
+    // Trata erros
+    console.error(error);
+    if (error.response) {
+      // The request was made and the server responded with a status code
+      // that falls out of the range of 2xx
+      res.status(error.response.status).json({ error: error.response.data });
+    } else if (error.request) {
+      // The request was made but no response was received
+      // error.request is an instance of XMLHttpRequest in the browser and an instance of
+      // http.ClientRequest in node.js
+      res.status(404).json({ error: error.request });
+    } else {
+      // Something happened in setting up the request that triggered an Error
+      res.status(500).json({ error: error.message });
+    }
   }
+})
+
+/*
+ * Player endpoints 
+*/
+
+// Create player endpoint
+app.post('/api/' + version + '/players', authMiddleware.verify, async (req, res) => {
+  try {
+    let username = req.body.username;
+    let profileData = req.body.profileData;
+    let thirdPartyData = req.body.thirdPartyData;
+    let createdPlayer = await server.createPlayer(
+      username,
+      profileData,
+      thirdPartyData
+    );
+    res.send(createdPlayer);
+  } catch (error) {
+    res.status(500).send({ error: error.message });
   }
-  })
+});
+
+// Update player endpoint
+app.put('/api/' + version + '/players/:playerId', authMiddleware.verify, async (req, res) => {
+  try {
+    let playerId = req.params.playerId;
+    let username = req.body.username;
+    let profileData = req.body.profileData;
+    let thirdPartyData = req.body.thirdPartyData;
+    let updatedPlayer = await server.updatePlayer(
+      playerId,
+      username,
+      profileData,
+      thirdPartyData
+    );
+    res.send(updatedPlayer);
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+  }
+});
+
+// Get player by ID endpoint
+app.get('/api/' + version + '/players/:playerId', async (req, res) => {
+  try {
+    let playerId = req.params.playerId;
+    let player = await server.findPlayer(playerId);
+    res.send(player);
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+  }
+});
+
+// Get all players endpoint
+app.get("/players", async (req, res) => {
+  try {
+    let players = await server.findAllPlayers();
+    res.send(players);
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+  }
+});
 
 /*
  * Server
@@ -229,3 +290,5 @@ app.post('/api/' + version + '/quests/:questId/verify', authMiddleware.verify, a
 app.listen(port, () => {
   console.log(`ggQuest Server now listening on port ${port}`)
 })
+
+
